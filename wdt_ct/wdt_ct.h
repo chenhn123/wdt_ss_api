@@ -50,5 +50,9 @@ void 		wh_sleep(int ms);
 void 		wh_udelay(int us);
 unsigned long 	get_current_ms();
 
+int run_from_lib(int argc, char * argv[]);
+
+
+
 /* __WDT_CT_H__ */
 #endif

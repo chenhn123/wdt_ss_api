@@ -1,40 +1,46 @@
-# Compiler and Linker
-CXX = g++                  # C++ compiler
-CXXFLAGS = -Wall -Wextra -O2 -fPIC  # Compiler flags for C++
-LDFLAGS = -shared                  # Link as a shared library
+# Compiler and archiver
+CXX = g++
+AR = ar
 
-# Directories
-SRC_DIR = wdt_ct                  # Assuming source code is in the wdt_ct folder
-BUILD_DIR = build                 # Directory for object files
-INCLUDE_DIR = .                   # Include current directory for headers
-LIBRARY_DIR = lib                 # Where to output the library
+# Flags
+CXXFLAGS = -Wall -O2 -std=c++11
+INCLUDES = -I.
 
 # Files
-SOURCES = $(wildcard $(SRC_DIR)/*.cpp)  # All .cpp files in the src directory
-OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)  # Object files
-TARGET = $(LIBRARY_DIR)/libwdt_ss.so  # Final shared library file
+LIB_NAME = libwdtss.a
+LIB_OBJS = wdt_ss_api.o \
+           wdt_ct/wdt_ct.o \
+           wdt_ct/w8755_funcs.o \
+	   wdt_ct/w8760_funcs.o \
+           wdt_ct/w8790_funcs.o \
+           wdt_ct/wdt_dev_api.o \
+           wdt_ct/func_i2c.o \
+           wdt_ct/wif2_handler.o \
+	   wdt_ct/func_hidraw.o 
 
-# Create directories if they don't exist
-$(shell mkdir -p $(BUILD_DIR) $(LIBRARY_DIR))
 
-# Default target: Build the shared library
-all: $(TARGET)
+COBJS = wdt_ct/hid_hidraw.o
 
-# Rule to build the shared library
-$(TARGET): $(OBJECTS)
-	$(CXX) $(LDFLAGS) -o $@ $^
 
-# Rule to compile source files
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -I$(INCLUDE_DIR) -c -o $@ $<
+TEST_SRC = test.cpp
+TEST_BIN = test_app
 
-# Clean build files
+# Default target
+all: $(LIB_NAME) $(TEST_BIN)
+
+# Build static library from object file
+$(LIB_NAME): $(LIB_OBJS) $(COBJS)
+	$(AR) rcs $@ $^
+
+# Compile test.cpp and link with static library
+$(TEST_BIN): $(TEST_SRC) $(LIB_NAME)
+	$(CXX) $(CXXFLAGS) $(TEST_SRC) -L. -lwdtss $(INCLUDES) -o $(TEST_BIN)
+
+# Compile source files into object files
+%.o: %.cpp %.h
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Clean everything
 clean:
-	rm -rf $(BUILD_DIR)/*.o $(LIBRARY_DIR)/*
+	rm -f *.o $(LIB_NAME) $(TEST_BIN)
 
-# Install the shared library
-install: $(TARGET)
-	cp $(TARGET) /usr/local/lib
-	ldconfig  # Update the linker cache
-
-.PHONY: all clean install

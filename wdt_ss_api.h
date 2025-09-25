@@ -1,6 +1,7 @@
 #ifndef __WDT_SS_API_H__
 #define __WDT_SS_API_H__
- #include <stdint.h>
+#include <stdint.h>
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {

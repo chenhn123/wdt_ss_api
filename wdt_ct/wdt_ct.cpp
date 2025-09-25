@@ -209,7 +209,7 @@ int parse_args(int argc, char* argv[], EXEC_PARAM* pparam)
 	return pparam->argus;
 }
 
-
+/*
 int main(int argc, char * argv[]) 
 {
 	int		ret = 0;
@@ -266,3 +266,57 @@ int main(int argc, char * argv[])
 	
 	return ret;
 }
+
+*/
+int run_from_lib(int argc, char * argv[])
+{
+	
+	int		ret = 0;
+	int		info_mask = OPTION_FW_VER | OPTION_CFG_CHKSUM | OPTION_HW_ID;
+	EXEC_PARAM	exec_param;
+	WDT_DEV		wdt_dev;
+	unsigned long	start_tick;
+	int (*LPFUNC_execution)(WDT_DEV*, EXEC_PARAM*);
+
+	memset((void*) &exec_param, 0, sizeof(EXEC_PARAM));
+	if(!parse_args(argc, argv, &exec_param)) {
+		printf("ret\n");
+		return 0;
+	}
+
+	if (!(exec_param.argus & info_mask))
+		print_version();
+
+	if (!check_privilege()) {
+		printf("Must be a root to run this program!\n");
+		return 0;
+	}
+
+	memset(&wdt_dev, 0, sizeof(WDT_DEV));
+	
+	if (!load_lib_func_address(&wdt_dev, &exec_param)) {
+		printf("Load function table failed !\n");
+		return 0;
+	}
+
+	wdt_dev.pparam = &exec_param;
+	start_tick = get_current_ms();
+
+	LPFUNC_execution = NULL;
+	if (exec_param.argus & OPTION_UPDATE)
+		LPFUNC_execution = image_file_burn_data_verify; 
+	else if (exec_param.argus & (info_mask | OPTION_INFO))
+		LPFUNC_execution = show_info; 
+	else if (exec_param.argus & OPTION_WIF_INFO)
+		LPFUNC_execution = show_wif_info; 
+	
+	if (LPFUNC_execution)
+		ret = LPFUNC_execution(&wdt_dev, &exec_param);
+
+	return ret;
+
+}
+
+
+
+
