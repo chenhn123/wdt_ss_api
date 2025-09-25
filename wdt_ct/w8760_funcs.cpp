@@ -87,7 +87,9 @@ int wh_w8760_dev_set_feature(WDT_DEV* pdev, BYTE* buf, UINT32 buf_size)
 	}
 	
 	if (pdev->intf_index == INTERFACE_I2C)
-		return wh_i2c_set_feature(pdev, buf, buf_size);	
+		return wh_i2c_set_feature(pdev, buf, buf_size);
+	else if(pdev->intf_index == INTERFACE_HIDRAW)
+		return wh_hidraw_set_feature(pdev, buf, buf_size);
 
 	return 0;
 }
@@ -109,6 +111,8 @@ int wh_w8760_dev_get_feature(WDT_DEV* pdev, BYTE* buf, UINT32 buf_size)
 			
 	if (pdev->intf_index == INTERFACE_I2C)
 		return wh_i2c_get_feature(pdev, buf, buf_size);	
+	else if(pdev->intf_index == INTERFACE_HIDRAW)
+		return wh_hidraw_get_feature(pdev, buf, buf_size);
 
 	return 0;
 }
@@ -775,8 +779,10 @@ int wh_w8760_dev_program_4k_chunk_verify(WDT_DEV* pdev, CHUNK_INFO_EX* pInputChu
 	pdev->dev_state = DS_PROGRAM;
 
 	retval = wh_w8760_dev_set_n_check_device_mode(pdev, W8760_MODE_FLASH_PROGRAM, 0, 0);
-	if (!retval)
+	if (!retval){
+		printf("set device mode fail\n");
 		return retval;
+	}
 		
 	UINT32 value = (pInputChunk->length + 255) >> 8;
 	value |= (((pChunk->chuckInfo.targetStartAddr >> 8) << 16) & 0xFFFF0000);

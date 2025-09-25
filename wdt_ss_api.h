@@ -46,7 +46,7 @@ int wdt_ss_firmware_verification(char* path);
  * \return       Zero on success, non-zero error code on failure.
  */
 __attribute__((visibility("default")))
-int wdt_ss_get_current_firmware_version(uint32_t* version);
+int wdt_ss_get_current_firmware_version(unsigned int* version);
 /**
  * \brief        Retrieves the name of the connected Wedia Touch device.
  * \details      This function fills the provided buffer with the name of the connected device.
@@ -76,7 +76,7 @@ int wdt_ss_get_device_name(char* name, size_t max_len);
  */
 
 __attribute__((visibility("default")))
-int wdt_ss_get_vid_pid(uint32_t* vid, uint32_t* pid);
+int wdt_ss_get_vid_pid(unsigned int* vid, unsigned int* pid);
 
 
 #ifdef __cplusplus

@@ -1,9 +1,9 @@
 # Compiler and archiver
-CXX = g++
+CXX = gcc
 AR = ar
 
 # Flags
-CXXFLAGS = -Wall -O2 -std=c++11
+CXXFLAGS = -Wall -O2 #-std=c++11
 INCLUDES = -I.
 
 # Files

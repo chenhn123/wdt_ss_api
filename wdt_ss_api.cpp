@@ -18,13 +18,13 @@ int wdt_ss_get_api_version(void)
 
 int wdt_ss_firmware_update(char* path)
 {
-	
+	char* argv[2];
+	argv[0] = (char*)"-u";
+	argv[1] = path;
+	int argc = 2;	
 
-	//return run_from_lib(int argc, char * argv[])
+	return run_from_lib(argc, argv);
 
-
-
-	return 1;
 }
 
 
@@ -36,7 +36,7 @@ int wdt_ss_firmware_verification(char* path)
 }
 
 
-int wdt_ss_get_current_firmware_version(uint32_t* version)
+int wdt_ss_get_current_firmware_version(unsigned int* version)
 {
 	return 1;
 }
@@ -44,15 +44,14 @@ int wdt_ss_get_current_firmware_version(uint32_t* version)
 
 int wdt_ss_get_device_name(char* name, size_t max_len)
 {
+
 	return 1;
 }
 
-int wdt_ss_get_vid_pid(uint32_t* vid, uint32_t* pid)
+int wdt_ss_get_vid_pid(unsigned int* vid, unsigned int* pid)
 {
-	char* argv[2];
-	argv[0] = "n";  //this is placeholder
-	argv[1] = "-s";
-	return run_from_lib(2, argv);
+    	int status = get_vid_pid_internal(vid, pid);
+	return status;
 }
 
 

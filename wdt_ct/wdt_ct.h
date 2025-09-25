@@ -17,6 +17,7 @@
 
 #ifndef	__WDT_CT_H__
 #define	__WDT_CT_H__
+#include "stdint.h"
 
 /* define for device control */
 #define		OPTION_UPDATE			0x1
@@ -50,7 +51,9 @@ void 		wh_sleep(int ms);
 void 		wh_udelay(int us);
 unsigned long 	get_current_ms();
 
-int run_from_lib(int argc, char * argv[]);
+int run_from_lib(int argc, char *argv[]);
+
+int get_vid_pid_internal(unsigned int *vid, unsigned int *pid);
 
 
 

@@ -134,12 +134,16 @@ int parse_args(int argc, char* argv[], EXEC_PARAM* pparam)
 	int 	index;
 	char	*parg = 0;	
 
-	/* only support I2C here */
-	pparam->interface_num = INTERFACE_I2C;
+	/* only support Hidraw here */
+	pparam->interface_num = INTERFACE_HIDRAW;
+	printf("here\n");
 
 	while ((opt = getopt_long(argc, argv, WDT_UTIL_GETOPTS, long_options, &index)) != -1) {
+		
+		printf("opt %d\n", opt);
 		switch (opt) {
 			case 'h':
+				printf("help\n");
 				print_help(argv[0]);
 				return 0;
 			case 'd':
@@ -154,6 +158,7 @@ int parse_args(int argc, char* argv[], EXEC_PARAM* pparam)
 					strcpy(pparam->dev_path, parg);
 				break;
 			case 'u':
+				printf("got u\n");
 				pparam->argus |= OPTION_UPDATE;
 				pparam->image_file = optarg;
 				break;
@@ -189,12 +194,19 @@ int parse_args(int argc, char* argv[], EXEC_PARAM* pparam)
 				pparam->argus |= OPTION_BLOCK;
 				break;	
 			default:
+				printf("default%s\n",argv[0]);
 				break;
 
 		}
+
 	}
 
+	printf("opt %d\n", opt);
+
 	if (optind != argc) {
+
+		printf("optind%d", optind);
+		printf("argc%d\n", argc);
 		int i=0; 
 		while (i<argc) {
 			printf("%s ", argv[i]);
@@ -203,8 +215,9 @@ int parse_args(int argc, char* argv[], EXEC_PARAM* pparam)
 		printf("\n");
 		
 		print_help(argv[0]);
-		return 0;
+		return pparam->argus;
 	}
+	printf("arg %d\n", pparam->argus);
 
 	return pparam->argus;
 }
@@ -268,7 +281,7 @@ int main(int argc, char * argv[])
 }
 
 */
-int run_from_lib(int argc, char * argv[])
+int run_from_lib(int argc, char* argv[])
 {
 	
 	int		ret = 0;
@@ -277,12 +290,13 @@ int run_from_lib(int argc, char * argv[])
 	WDT_DEV		wdt_dev;
 	unsigned long	start_tick;
 	int (*LPFUNC_execution)(WDT_DEV*, EXEC_PARAM*);
-
+	
 	memset((void*) &exec_param, 0, sizeof(EXEC_PARAM));
-	if(!parse_args(argc, argv, &exec_param)) {
-		printf("ret\n");
-		return 0;
-	}
+
+	exec_param.interface_num = INTERFACE_HIDRAW;
+	exec_param.argus |= OPTION_UPDATE;
+	exec_param.image_file = "/home/randy/work/wdt_hidraw_lib/WDT8762AT_Wif_2025_0925_r10.3_AA0A_BE06_000.wif";
+
 
 	if (!(exec_param.argus & info_mask))
 		print_version();
@@ -320,3 +334,68 @@ int run_from_lib(int argc, char * argv[])
 
 
 
+int get_vid_pid_internal(unsigned int *vid, unsigned int *pid)
+{
+	int		ret = 0;
+	int		info_mask = OPTION_FW_VER | OPTION_CFG_CHKSUM | OPTION_HW_ID;
+	EXEC_PARAM	exec_param;
+	WDT_DEV		wdt_dev;
+	unsigned long	start_tick;
+	int (*LPFUNC_execution)(WDT_DEV*, EXEC_PARAM*);
+
+	memset((void*) &exec_param, 0, sizeof(EXEC_PARAM));
+/*	
+	if(!parse_args(argc, argv, &exec_param)) {
+		printf("ret\n");
+		return 0;
+	}
+	
+*/	
+	exec_param.interface_num = INTERFACE_HIDRAW;
+	exec_param.argus |= OPTION_INFO;
+
+	if (!(exec_param.argus & info_mask))
+		print_version();
+
+	if (!check_privilege()) {
+		printf("Must be a root to run this program!\n");
+		return 0;
+	}
+
+	memset(&wdt_dev, 0, sizeof(WDT_DEV));
+	
+	if (!load_lib_func_address(&wdt_dev, &exec_param)) {
+		printf("Load function table failed !\n");
+		return 0;
+	}
+
+	wdt_dev.pparam = &exec_param;
+
+	LPFUNC_execution = NULL;
+	if (exec_param.argus & OPTION_UPDATE)
+		LPFUNC_execution = image_file_burn_data_verify; 
+	else if (exec_param.argus & (info_mask | OPTION_INFO))
+		LPFUNC_execution = show_info; 
+	else if (exec_param.argus & OPTION_WIF_INFO)
+		LPFUNC_execution = show_wif_info; 
+	
+	if (LPFUNC_execution)
+		ret = LPFUNC_execution(&wdt_dev, &exec_param);
+	
+	if (vid == NULL|| pid == NULL) {
+        	return -1; // handle error safely
+	}
+
+	//printf("vendor: %x", wdt_dev.board_info.vid);
+
+	
+
+
+	*vid = wdt_dev.board_info.vid;
+
+	*pid = wdt_dev.board_info.pid;
+	
+
+	return ret;
+
+}

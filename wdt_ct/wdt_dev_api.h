@@ -197,7 +197,7 @@ int 		check_firmware_id(WDT_DEV *pdev, UINT32 fwid);
 UINT16 		misr_for_bytes(UINT16 current_value, BYTE *bytes, int start, int size);
 UINT16		misr_32b(UINT16 current_value, UINT32 new_word);
 int 		wh_hidraw_get_feature(WDT_DEV *pdev, BYTE* buf, UINT32 buf_size);
-
+int 		wh_hidraw_set_feature(WDT_DEV *pdev, BYTE* buf, UINT32 buf_size);
 
 /* __WDT_DEV_API_H__ */
 #endif

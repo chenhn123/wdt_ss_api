@@ -308,7 +308,6 @@ int init_n_scan_device(WDT_DEV *pdev, EXEC_PARAM *pparam, unsigned int flag)
 		return 0;
 
 	pdev->intf_index = pparam->interface_num;
-	pdev->intf_index = 3;
 
 	if (!pdev->func_wh_get_device_access_func(pdev->intf_index, &pdev->funcs_device)) {
 		wh_printf("Get device funcs error");
