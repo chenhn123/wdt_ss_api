@@ -178,6 +178,13 @@ int 		wh_i2c_open_device(WDT_DEV *pdev);
 int		wh_i2c_close_device(WDT_DEV *pdev);
 int		wh_i2c_prepare_data(WDT_DEV *pDev, BOARD_INFO *pboard_info);
 
+int		wh_hidraw_scan_device(WDT_DEV* pdev);
+int 		wh_hidraw_get_device(WDT_DEV* pdev, WDT_DEVICE_INFO *pDevInfo, int flag);
+int		wh_hidraw_open_device(WDT_DEV* pdev);
+int		wh_hidraw_close_device(WDT_DEV* pdev);
+int		wh_hidraw_prepare_data(WDT_DEV *pDev, BOARD_INFO* p_out_board_info);
+
+
 UINT16 		get_unaligned_le16(const void *p);
 UINT32 		get_unaligned_le32(const void *p);
 void 		put_unaligned_le16(UINT16 val, BYTE *p);
@@ -189,6 +196,7 @@ int		count_ff_bytes(BYTE* data, int start, int size);
 int 		check_firmware_id(WDT_DEV *pdev, UINT32 fwid);
 UINT16 		misr_for_bytes(UINT16 current_value, BYTE *bytes, int start, int size);
 UINT16		misr_32b(UINT16 current_value, UINT32 new_word);
+int 		wh_hidraw_get_feature(WDT_DEV *pdev, BYTE* buf, UINT32 buf_size);
 
 
 /* __WDT_DEV_API_H__ */

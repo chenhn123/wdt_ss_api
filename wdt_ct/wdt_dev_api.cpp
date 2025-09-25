@@ -34,6 +34,7 @@
 #include "w8790_funcs.h"
 #include "wdt_ct.h"
 #include "wif2.h"
+#include "hidraw_api.h"
 
 
 int wh_get_device_access_func(int interfaceIndex, FUNC_PTR_STRUCT_DEV_ACCESS*  pFuncs)
@@ -47,6 +48,14 @@ int wh_get_device_access_func(int interfaceIndex, FUNC_PTR_STRUCT_DEV_ACCESS*  p
 		pFuncs->p_wh_open_device = (LPFUNC_wh_open_device) wh_i2c_open_device;
 		pFuncs->p_wh_close_device = (LPFUNC_wh_close_device) wh_i2c_close_device;
 		pFuncs->p_wh_prepare_data = (LPFUNC_wh_prepare_data) wh_i2c_prepare_data;			
+		return 1;
+	}
+	else if(interfaceIndex == INTERFACE_HIDRAW) {
+		pFuncs->p_wh_scan_device = (LPFUNC_wh_scan_device) wh_hidraw_scan_device;
+		pFuncs->p_wh_get_device = (LPFUNC_wh_get_device) wh_hidraw_get_device;
+		pFuncs->p_wh_open_device = (LPFUNC_wh_open_device) wh_hidraw_open_device;
+		pFuncs->p_wh_close_device = (LPFUNC_wh_close_device) wh_hidraw_close_device;
+		pFuncs->p_wh_prepare_data = (LPFUNC_wh_prepare_data) wh_hidraw_prepare_data;
 		return 1;
 	}
 
@@ -127,6 +136,8 @@ int wh_get_device_basic_access_func(WDT_DEV* pdev,  FUNC_PTR_STRUCT_DEV_BASIC*  
 
 	return 0;
 }
+
+
 
 int check_firmware_id(WDT_DEV *pdev, UINT32 fwid)
 {
@@ -297,6 +308,7 @@ int init_n_scan_device(WDT_DEV *pdev, EXEC_PARAM *pparam, unsigned int flag)
 		return 0;
 
 	pdev->intf_index = pparam->interface_num;
+	pdev->intf_index = 3;
 
 	if (!pdev->func_wh_get_device_access_func(pdev->intf_index, &pdev->funcs_device)) {
 		wh_printf("Get device funcs error");

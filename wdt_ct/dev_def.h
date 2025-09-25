@@ -18,6 +18,9 @@
 #ifndef	__DEV_DEF_H__
 #define	__DEV_DEF_H__
 
+
+#include <stddef.h>  // For size_t
+#include <string.h> 
 #include "w8755_def.h"
 #include "w8760_def.h"
 #include "w8790_def.h"
@@ -114,11 +117,9 @@ typedef union u_dev_info {
 } U_DEV_INFO;
 
 typedef union sec_header {
-
 	W8755_SEC_ADDR_TYPE	w8755_sec_header;
 	W8760_SECTION_MAP_ADDR	w8760_sec_addr;
 	W8790_FLASH_MAP		w8790_sec_addr;
-
 } U_SEC_HEADER;
 
 
