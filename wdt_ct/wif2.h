@@ -79,5 +79,6 @@ typedef	struct WifFile2 {
 
 int update_fw_by_wif2(WDT_DEV *pdev, char *path);
 int show_wif2_info(char *path);
+int check_fw_by_wif2(WDT_DEV *pdev, char *path);
 
 #endif

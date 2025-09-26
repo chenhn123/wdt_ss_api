@@ -1,14 +1,27 @@
+/*
+ * Copyright (C) 2025 Randy L.
+ * Copyright (C) 2025 Weida Hi-Tech
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
 
 #include "wdt_ss_api.h"
 
 #include "wdt_ct/wdt_dev_api.h"
 #include "wdt_ct/wdt_ct.h"
-#define WDT_SS_API_VERSION_MAJOR 1
-#define WDT_SS_API_VERSION_MINOR 0
-#define WDT_SS_API_VERSION_PATCH 0
-
-#define WDT_SS_API_VERSION \
-    ((WDT_SS_API_VERSION_MAJOR << 16) | (WDT_SS_API_VERSION_MINOR << 8) | WDT_SS_API_VERSION_PATCH)
 
 int wdt_ss_get_api_version(void)
 {
@@ -16,42 +29,32 @@ int wdt_ss_get_api_version(void)
 }
 
 
-int wdt_ss_firmware_update(char* path)
+int wdt_ss_update_firmware(char* path)
 {
-	char* argv[2];
-	argv[0] = (char*)"-u";
-	argv[1] = path;
-	int argc = 2;	
-
-	return run_from_lib(argc, argv);
-
+	return update_firmware_internal(path);
 }
 
 
-
-
-int wdt_ss_firmware_verification(char* path)
+int wdt_ss_verify_firmware(char* path)
 {
-	return 1;
+	return verify_firmware_internal(path);
 }
 
 
 int wdt_ss_get_current_firmware_version(unsigned int* version)
 {
-	return 1;
+	return get_current_firmware_version_internal(version);
 }
 
 
 int wdt_ss_get_device_name(char* name, size_t max_len)
 {
-
-	return 1;
+	return get_device_name_internal(name, max_len);
 }
 
 int wdt_ss_get_vid_pid(unsigned int* vid, unsigned int* pid)
 {
-    	int status = get_vid_pid_internal(vid, pid);
-	return status;
+    	return  get_vid_pid_internal(vid, pid);
 }
 
 

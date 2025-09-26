@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2025 Randy L.
  * Copyright (C) 2017 Chen Hung-Nien
  * Copyright (C) 2017 Weida Hi-Tech
  *
@@ -55,7 +56,8 @@ int wh_w8760_get_feature_devinfo(W8760_REPORT_FEATURE_DEVINFO* report_feature_de
 	report_feature_devinfo->parameter_section_size = get_unaligned_le16(&buf[34]);	
 	report_feature_devinfo->parameter_mapid = get_unaligned_le16(&buf[36]);	
 	memcpy(report_feature_devinfo->program_name_fourcc, &buf[38], 4);	
-	memcpy(report_feature_devinfo->trackingid_or_old_part_num, &buf[42], 8);	
+	memcpy(report_feature_devinfo->trackingid_or_old_part_num, &buf[42], 8);
+	memcpy(report_feature_devinfo->part_number_ext, &buf[50], 8);
 	
 	return 1;
 }
@@ -198,7 +200,7 @@ int wh_w8760_dev_wait_cmd_end(WDT_DEV* pdev, int timeout_ms, int invt_ms)
 	int polling_timeout_ms = 5000;
 	int polling_intv_ms = 5;
 	int status;
-	BYTE	status_buf[4];
+	BYTE status_buf[4];
 
 	if (timeout_ms)
 		polling_timeout_ms = timeout_ms;
@@ -352,21 +354,21 @@ int wh_w8760_dev_identify_platform(WDT_DEV* pdev, BOARD_INFO* pboardInfo)
 	if (memcmp(W8760_RomSignatureVerB, pdev->board_info.dev_info.w8760_feature_devinfo.rom_signature, 8) == 0) {
 		pboardInfo->dev_type = FW_WDT8760;
 		if (pdev->pparam->argus & OPTION_INFO)		
-			printf("WDT8760_VerB\n");
+			wh_printf("WDT8760_VerB\n");
 		return 1;
 	}
 
 	if (memcmp(W8762_RomSignatureVerA, pdev->board_info.dev_info.w8760_feature_devinfo.rom_signature, 8) == 0) {
 		pboardInfo->dev_type = FW_WDT8762;
 		if (pdev->pparam->argus & OPTION_INFO)		
-			printf("WDT8762_VerA\n");
+			wh_printf("WDT8762_VerA\n");
 		return 1;
 	}
 
 	if (memcmp(W8762_RomSignatureVerC, pdev->board_info.dev_info.w8760_feature_devinfo.rom_signature, 8) == 0) {
 		pboardInfo->dev_type = FW_WDT8762;
 		if (pdev->pparam->argus & OPTION_INFO)		
-			printf("WDT8762_VerC\n");
+			wh_printf("WDT8762_VerC\n");
 		return 1;
 	}
 	
@@ -727,6 +729,9 @@ int wh_w8760_prepare_data(WDT_DEV* pdev, BOARD_INFO* p_out_board_info)
 		wh_printf("Can't get platform identify!\n");
 		return 0;
 	}
+	memcpy(p_out_board_info->device_name, pdev->board_info.dev_info.w8760_feature_devinfo.platform_id, 8);
+	memcpy(&p_out_board_info->device_name[8], pdev->board_info.dev_info.w8760_feature_devinfo.part_number_ext, 8);
+
 	
 	if (p_out_board_info->dev_type & FW_WDT8760_2_ISP)
 		return 1;

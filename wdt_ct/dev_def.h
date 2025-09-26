@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2025 Randy L.
  * Copyright (C) 2017 Chen Hung-Nien
  * Copyright (C) 2017 Weida Hi-Tech
  *
@@ -134,7 +135,7 @@ typedef	struct BoardInfo
 	UINT32			serial_no;
 	
 	SYS_PARAM		sys_param;
-	BYTE			platform_id[12];
+	BYTE			device_name[16];
 	BYTE                    i2c_address;
 	I2C_HID_DESC		dev_hid_desc;
 	U_DEV_INFO		dev_info;

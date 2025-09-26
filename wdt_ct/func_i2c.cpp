@@ -437,7 +437,6 @@ int wh_i2c_prepare_data(WDT_DEV *pdev, BOARD_INFO* pboard_info)
 	if (buf[0] == 0xf4 && (get_unaligned_le16(buf + 2) == 0x154f)) { 
 
 		board_info.dev_type |= FW_WDT8755;
-		board_info.platform_id[1] = buf[5];
 
 		memcpy(&board_info.sys_param, &buf[10], get_unaligned_le16(buf + 12));
 		if (wh_w8755_prepare_data(pdev, &board_info, 0)) {

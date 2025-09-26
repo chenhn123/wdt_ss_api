@@ -320,7 +320,6 @@ int wh_hidraw_prepare_data(WDT_DEV *pdev, BOARD_INFO* p_out_board_info)
 
 		if (buf[0] == 0xf4 && (get_unaligned_le16(buf + 2) == 0x154f)) { 	
 			board_info.dev_type |= FW_WDT8755;
-			board_info.platform_id[1] = buf[5];
 
 			memcpy(&board_info.sys_param, &buf[10], get_unaligned_le16(buf + 12));
 
@@ -332,7 +331,7 @@ int wh_hidraw_prepare_data(WDT_DEV *pdev, BOARD_INFO* p_out_board_info)
 		goto exit_prepare_data;
 	}	
 
-	printf("*** string feature is not supported in hidraw,\n skip to get parameters, platform_id\n\n");
+	printf("*** string feature is not supported in hidraw,\n skip to get parameters\n");
 
 exit_prepare_data:
 	if (p_out_board_info) {

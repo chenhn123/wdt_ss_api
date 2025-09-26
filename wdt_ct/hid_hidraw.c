@@ -456,20 +456,11 @@ int HID_API_EXPORT hidraw_set_nonblocking(hidraw_device *dev, int nonblock)
 }
 
 
-int HID_API_EXPORT hidraw_send_feature_report(hidraw_device *dev, const unsigned char *data, size_t length) // int type)
+int HID_API_EXPORT hidraw_send_feature_report(hidraw_device *dev, const unsigned char *data, size_t length) 
 {
 	int res;
 
-//	if (type)
-		res = ioctl(dev->device_handle, HIDIOCSFEATURE(length), data);
-/*
-	else {
-		if(length <= 8)
-			res = ioctl(dev->device_handle, HIDIOCSFEATURE(8), data);	
-		else
-			res = ioctl(dev->device_handle, HIDIOCSFEATURE(64), data);
-	}
-*/	
+	res = ioctl(dev->device_handle, HIDIOCSFEATURE(length), data);
 
 	if (res < 0)
 		printf("ioctl (SFEATURE): error (%d)\n", res);
@@ -479,20 +470,11 @@ int HID_API_EXPORT hidraw_send_feature_report(hidraw_device *dev, const unsigned
 	return (res >= 0);
 }
 
-int HID_API_EXPORT hidraw_get_feature_report(hidraw_device *dev, unsigned char *data, size_t length) //, int type)
+int HID_API_EXPORT hidraw_get_feature_report(hidraw_device *dev, unsigned char *data, size_t length) 
 {
 	int res;
 	
-	//if (type)
-		res = ioctl(dev->device_handle, HIDIOCGFEATURE(length), data);
-/*	
-	else {
-		if(length <= 8)
-			res = ioctl(dev->device_handle, HIDIOCGFEATURE(8), data);
-		else
-			res = ioctl(dev->device_handle, HIDIOCGFEATURE(64), data);
-	}
-	*/
+	res = ioctl(dev->device_handle, HIDIOCGFEATURE(length), data);
 
 	if (res < 0)
 		printf("ioctl (GFEATURE): error (%d)\n", res);
@@ -529,7 +511,6 @@ int HID_API_EXPORT_CALL hidraw_get_serial_number_string(hidraw_device *dev, wcha
 
 int HID_API_EXPORT_CALL hidraw_get_indexed_string(hidraw_device *dev, int string_index, wchar_t *string, size_t maxlen)
 {
-	//return -1;
 	return get_device_string(dev, string_index, string, maxlen);
 }
 

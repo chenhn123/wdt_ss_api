@@ -21,7 +21,7 @@
 
 /* define for device control */
 #define		OPTION_UPDATE			0x1
-#define		OPTION_ISP_UPDATE		0x2
+#define		OPTION_VERIFY			0x2
 #define		OPTION_NO_FORCE			0x4
 #define		OPTION_INFO			0x8
 #define		OPTION_EXTRA_INFO		0x10
@@ -37,13 +37,12 @@
 #define		OPTION_CFG_CHKSUM		0x2000
 #define		OPTION_HW_ID			0x4000
 
-#define		TOOL_TITLE_STR			"Weida Update Utility"
-#define		TOOL_VERSION_STR		"V0.9.17"
 
 int		load_lib_func_address(WDT_DEV*, EXEC_PARAM*);
 int		image_file_burn_data_verify(WDT_DEV *pdev, EXEC_PARAM *pParam);
 int 		show_wif_info(WDT_DEV *pdev, EXEC_PARAM *pparam);
 int		show_info(WDT_DEV *pdev, EXEC_PARAM *pParam);
+int		image_file_check(WDT_DEV *pdev, EXEC_PARAM *pParam);
 int		rebind_driver(WDT_DEV *pdev);
 
 void 		wh_printf(const char *fmt, ...);
@@ -51,9 +50,11 @@ void 		wh_sleep(int ms);
 void 		wh_udelay(int us);
 unsigned long 	get_current_ms();
 
-int run_from_lib(int argc, char *argv[]);
-
+int update_firmware_internal(char *path);
+int verify_firmware_internal(char *path);
 int get_vid_pid_internal(unsigned int *vid, unsigned int *pid);
+int get_current_firmware_version_internal(unsigned int *version);
+int get_device_name_internal(char *name, size_t max_len);
 
 
 

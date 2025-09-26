@@ -1,7 +1,32 @@
+/*
+ * Copyright (C) 2025 Randy Lai
+ * Copyright (C) 2025 Weida Hi-Tech
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #ifndef __WDT_SS_API_H__
 #define __WDT_SS_API_H__
 #include <stdint.h>
 #include <stddef.h>
+
+
+#define WDT_SS_API_VERSION_MAJOR 1
+#define WDT_SS_API_VERSION_MINOR 0
+#define WDT_SS_API_VERSION_PATCH 0
+
+#define WDT_SS_API_VERSION \
+    ((WDT_SS_API_VERSION_MAJOR << 16) | (WDT_SS_API_VERSION_MINOR << 8) | WDT_SS_API_VERSION_PATCH)
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,7 +51,7 @@ int wdt_ss_get_api_version(void);
  * \return       Zero on success, non-zero error code on failure.
  */
 __attribute__((visibility("default")))
-int wdt_ss_firmware_update(char* path);
+int wdt_ss_update_firmware(char* path);
 /**
  * \brief        Verifies the Wedia Touch controller firmware.
  * \details      This function loads the firmware binary from the specified file path and
@@ -36,7 +61,7 @@ int wdt_ss_firmware_update(char* path);
  * \return       Zero if the firmware is valid, non-zero error code if verification fails.
  */
 __attribute__((visibility("default")))
-int wdt_ss_firmware_verification(char* path);
+int wdt_ss_verify_firmware(char* path);
 /**
  * \brief        Retrieves the current firmware version of the Wedia Touch controller.
  * \details      The version is returned as a 32-bit encoded integer, where the
