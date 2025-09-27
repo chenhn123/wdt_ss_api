@@ -778,16 +778,4 @@ int wh_i2c_get_desc(WDT_DEV *pdev, BYTE desc_type, BYTE string_idx, BYTE* target
 	return ret_size;
 }
 
-int wh_i2c_get_indexed_string(WDT_DEV *pdev, UINT32 index, BYTE* buf, UINT32 buf_size)
-{
-	if (pdev)
-		return wh_i2c_get_desc(pdev, GD_STRING, index, buf, buf_size);
-
-	return 0;
-}
-
-int wh_i2c_read(WDT_DEV* pdev, BYTE* buf, UINT32 buf_size)
-{
-	return 0;
-}
 

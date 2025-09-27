@@ -190,9 +190,6 @@ int wh_i2c_xfer(WDT_DEV *pdev, BYTE slave_addr, BYTE* txbuf, UINT32 tx_len, BYTE
 
 int wh_i2c_set_feature(WDT_DEV *pdev, BYTE* buf, UINT32 buf_size);
 int wh_i2c_get_feature(WDT_DEV *pdev, BYTE* buf, UINT32 buf_size);
-int wh_i2c_get_indexed_string(WDT_DEV *pdev, UINT32 index, BYTE* buf, UINT32 buf_size);
-int wh_i2c_read(WDT_DEV *pdev, BYTE* buf, UINT32 buf_size);
-int wh_i2c_get_desc(WDT_DEV *pdev, BYTE desc_type, BYTE string_idx, BYTE* target_buf, UINT32 buf_size);
 
 /* __DEV_DEF_H__ */
 #endif

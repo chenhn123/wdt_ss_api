@@ -772,6 +772,8 @@ int wh_w8755_dev_set_feature(WDT_DEV* pdev, BYTE* buf, UINT32 buf_size)
 	if (pdev->intf_index == INTERFACE_I2C) {
 		ret = wh_i2c_set_feature(pdev, buf, buf_size);	
 		return ret;
+	}else if(pdev->intf_index == INTERFACE_HIDRAW){
+		return wh_hidraw_set_feature(pdev, buf, buf_size);
 	}
 
 	return 0;
@@ -787,22 +789,15 @@ int wh_w8755_dev_get_feature(WDT_DEV* pdev, BYTE* buf, UINT32 buf_size)
 	if (pdev->intf_index == INTERFACE_I2C) {
 		ret = wh_i2c_get_feature(pdev, buf, buf_size);		
 		return ret;
+	}else if(pdev->intf_index == INTERFACE_HIDRAW){
+		return wh_hidraw_get_feature(pdev, buf, buf_size);
 	}
+	
 
 	return 0;
 }
 
  
-int wh_w8755_dev_read_report(WDT_DEV* pdev, BYTE* buf, UINT32 buf_size)
-{
-	if (!pdev)
-		return 0;
-
-	if (pdev->intf_index == INTERFACE_I2C)
-		return wh_i2c_read(pdev, buf, buf_size);
-
-	return 0;
-}
 
 int wh_w8755_dev_set_basic_op(WDT_DEV *pdev)
 {
@@ -811,7 +806,6 @@ int wh_w8755_dev_set_basic_op(WDT_DEV *pdev)
 
 	g_func_dev_basic.p_wh_get_feature = wh_w8755_dev_get_feature;
 	g_func_dev_basic.p_wh_set_feature = wh_w8755_dev_set_feature;
-	g_func_dev_basic.p_wh_read_report = wh_w8755_dev_read_report;
 
 	return 1;
 }

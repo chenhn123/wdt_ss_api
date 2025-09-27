@@ -136,7 +136,7 @@ int  wh_hidraw_scan_device(WDT_DEV* pdev)
 				strcpy(g_dev_info[g_cur_dev_index].path, g_dev_path);
 
                                    				    
-			        printf("path%d=%s\n", g_cur_dev_index, g_dev_path);
+			        wh_printf("path%d=%s\n", g_cur_dev_index, g_dev_path);
 				g_dev_count ++;
 
 			}

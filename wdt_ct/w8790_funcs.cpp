@@ -31,17 +31,6 @@ static FUNC_PTR_STRUCT_DEV_BASIC	g_func_dev_basic = { 0, 0, 0, 0 };
 BYTE W8790_RomSignatureVerA[8] = { 0xab, 0x85, 0xc0, 0xe8, 0x2b, 0x20, 0xe8, 0x11 };
 BYTE W8790_RomSignatureVerB[8] = { 0xe2, 0x82, 0xeb, 0x48, 0x34, 0xdb, 0xdb, 0x7b };
 
-int wh_w8790_dev_read_report(WDT_DEV* pdev, BYTE* buf, UINT32 buf_size)
-{
-	if (!pdev)
-		return 0;
-
-	if (pdev->intf_index == INTERFACE_I2C)
-		return wh_i2c_read(pdev, buf, buf_size);
-
-
-	return 0;
-}
 
 
 int wh_w8790_dev_set_feature(WDT_DEV* pdev, BYTE* buf, UINT32 buf_size)
@@ -59,6 +48,8 @@ int wh_w8790_dev_set_feature(WDT_DEV* pdev, BYTE* buf, UINT32 buf_size)
 	}
 	if (pdev->intf_index == INTERFACE_I2C)
 		return wh_i2c_set_feature(pdev, buf, buf_size);
+	else if(pdev->intf_index == INTERFACE_HIDRAW)
+		return wh_hidraw_set_feature(pdev, buf,buf_size);
 
 
 	return 0;
@@ -79,6 +70,8 @@ int wh_w8790_dev_get_feature(WDT_DEV* pdev, BYTE* buf, UINT32 buf_size)
 	}
 	if (pdev->intf_index == INTERFACE_I2C)
 		return wh_i2c_get_feature(pdev, buf, buf_size);
+	else if(pdev->intf_index == INTERFACE_HIDRAW)
+		return wh_hidraw_get_feature(pdev, buf, buf_size);
 
 
 
@@ -92,7 +85,6 @@ int wh_w8790_dev_set_basic_op(WDT_DEV* pdev)
 
 	g_func_dev_basic.p_wh_get_feature = wh_w8790_dev_get_feature;
 	g_func_dev_basic.p_wh_set_feature = wh_w8790_dev_set_feature;
-	g_func_dev_basic.p_wh_read_report = wh_w8790_dev_read_report;
 
 	return 1;
 }
@@ -139,13 +131,13 @@ int wh_w8790_dev_identify_platform(WDT_DEV* pdev)
 
 	if (memcmp(W8790_RomSignatureVerA, pdev->board_info.dev_info.w8790_feature_devinfo.rom_signature, 8) == 0) {
 		if (pdev->pparam->argus & OPTION_INFO)		
-			printf("WDT8790_VerA\n");
+			wh_printf("WDT8790_VerA\n");
 
 		return 1;
 	}
 	if (memcmp(W8790_RomSignatureVerB, pdev->board_info.dev_info.w8790_feature_devinfo.rom_signature, 8) == 0) {
                 if (pdev->pparam->argus & OPTION_INFO)	
-			printf("WDT8790_VerB\n");
+			wh_printf("WDT8790_VerB\n");
 		return 1;
 	}
 

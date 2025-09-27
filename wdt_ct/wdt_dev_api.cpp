@@ -110,7 +110,6 @@ int wh_get_device_basic_access_func(WDT_DEV* pdev,  FUNC_PTR_STRUCT_DEV_BASIC*  
 	if (pdev->board_info.dev_type & FW_WDT8755) {
 		pFuncs->p_wh_get_feature = (LPFUNC_wh_get_feature) wh_w8755_dev_get_feature;
 		pFuncs->p_wh_set_feature = (LPFUNC_wh_set_feature) wh_w8755_dev_set_feature;
-		pFuncs->p_wh_read_report = (LPFUNC_wh_read_report) wh_w8755_dev_read_report;
 
 		return 1;
 	}
@@ -118,15 +117,12 @@ int wh_get_device_basic_access_func(WDT_DEV* pdev,  FUNC_PTR_STRUCT_DEV_BASIC*  
 	if (pdev->board_info.dev_type & FW_WDT8760_2) {
 		pFuncs->p_wh_get_feature = (LPFUNC_wh_get_feature) wh_w8760_dev_get_feature;
 		pFuncs->p_wh_set_feature = (LPFUNC_wh_set_feature) wh_w8760_dev_set_feature;
-		pFuncs->p_wh_read_report = (LPFUNC_wh_read_report) wh_w8760_dev_read_report;
-
 		return 1;
 	}
 
 	if (pdev->board_info.dev_type & FW_WDT8790) {
 		pFuncs->p_wh_get_feature = (LPFUNC_wh_get_feature) wh_w8790_dev_get_feature;
                 pFuncs->p_wh_set_feature = (LPFUNC_wh_set_feature) wh_w8790_dev_set_feature;
-                pFuncs->p_wh_read_report = (LPFUNC_wh_read_report) wh_w8790_dev_read_report;
 
 		return 1;
 
