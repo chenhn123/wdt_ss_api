@@ -43,13 +43,11 @@ int main(int argc, char *argv[]) {
 	ret = wdt_ss_get_device_name(name, 16);
 	printf("device_name: %s \n", name);
 
-/*	
 	if(argc < 2) {
 		printf("Usage: %s <path>\n,", argv[0]);
 	}else{
 		ret = wdt_ss_update_firmware(argv[1]);
 	}
-	*/
 	
 	if(argc < 2) {
 		printf("Usage: %s <path>\n,", argv[0]);

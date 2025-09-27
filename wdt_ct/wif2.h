@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-#ifndef		__wif2_H__
-#define		__wif2_H__
+#ifndef		__WIF2_H__
+#define		__WIF2_H__
 
 
 
