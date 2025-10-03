@@ -21,20 +21,15 @@
 /* 
  * device working modes 
  * W8760_MODE_SENSING: Normal sensing
- * W8760_MODE_ISP: The device is in ISP mode. Unable to switch to other mode.
  * W8760_MODE_COMMAND: The device is waiting for memory access or flash parameter read/write commands. Especially from GUI tools.
  * W8760_MODE_FLASH_PROGRAM: The device is handling flash firmware erase/program commands. This mode has no return until reboot.
  */
-#define W8760_MODE_SENSING					1
-#define W8760_MODE_ISP						0x10
+#define W8760_MODE_SENSING					0x01
 #define W8760_MODE_COMMAND					0x90
 #define W8760_MODE_FLASH_PROGRAM				0x96
 
 #define W8760_COMMAND9 			0x06
 #define W8760_COMMAND63			0x07
-#define W8760_BLOCK63			0x0B
-#define W8760_PIPE9 			0x0D
-#define W8760_PIPE63			0x0E
 
 #define W8760_FLASH_SIZE 		(256 * 1024)
 #define W8760_FLASH_PAGE_SIZE 	(256)
@@ -132,8 +127,6 @@ enum W8760_IspCommandType
 	W8760_BLOCK_READ = 0xE1,
 	W8760_BLOCK_WRITE = 0xE2,
 	W8760_BLOCK_CHECKSUM = 0xE3,
-	W8760_READ_PIPE = 0xE4,
-	W8760_RUN_PROGRAM_FORM_BACKGROUND = 0xE5,
 
 };
 
@@ -171,4 +164,4 @@ enum W8760_FlashProtect
 
 
 /* __WDT8760_DEF_H__ */
-#endif
+# endif

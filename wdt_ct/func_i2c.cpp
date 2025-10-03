@@ -319,7 +319,6 @@ int wh_i2c_prepare_data(WDT_DEV *pdev, BOARD_INFO* pboard_info)
 {
 	BYTE				buf[80] ={0};
 	BOARD_INFO			board_info;	
-	int	ret_size;
 	int 	ret = 0;
 	int 	fw_id = 0;
 	int     retryF2 = 3;
@@ -359,21 +358,18 @@ int wh_i2c_prepare_data(WDT_DEV *pdev, BOARD_INFO* pboard_info)
 				if(memcmp(&buf[0 + 0x18], romSig, sizeof(romSig)) == 0)
 				{	
 					board_info.dev_type = FW_WDT8760_2_ISP;
-					wh_w8762_isp_rerun_recovery(pdev);		
 				}
 				memset(romSig, 0, sizeof(romSig));
 				wh_w8760_get_rom_signature(1, romSig);
 				if(memcmp(&buf[0 + 0x18], romSig, sizeof(romSig)) == 0)
 				{
 					board_info.dev_type = FW_WDT8760_2_ISP;
-					wh_w8762_isp_rerun_recovery(pdev);			
 				}
 				memset(romSig, 0, sizeof(romSig));
 				wh_w8760_get_rom_signature(0, romSig);
 				if(memcmp(&buf[0 + 0x18], romSig, sizeof(romSig)) == 0)
 				{
 					board_info.dev_type = FW_WDT8760_2_ISP;
-					wh_w8760_isp_rerun_recovery(pdev);
 				}	
 			
 			} 
@@ -445,22 +441,8 @@ int wh_i2c_prepare_data(WDT_DEV *pdev, BOARD_INFO* pboard_info)
 		}
 	}
 
-	if (!wh_i2c_get_desc(pdev, GD_DEVICE, 0, (BYTE*) buf, 18)) {
-		board_info.dev_type = FW_MAYBE_ISP;
-		printf("Get device desc error !\n");
-		return 0;	
-	}
-
-
-
-	ret_size = wh_i2c_get_desc(pdev, GD_STRING, STRIDX_PARAMETERS, (BYTE*) buf, 38);
-	if (!ret_size)	{
-		printf("Get parameters error !\n");
-		return 0;
-	}
 
 	memset((void*) &board_info.sys_param, 0, sizeof(SYS_PARAM));
-	memcpy((void*) &board_info.sys_param, buf, ret_size);	
 	memcpy(pboard_info, &board_info, sizeof(BOARD_INFO));
 	
 	return 1;

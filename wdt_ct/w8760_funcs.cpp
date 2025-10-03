@@ -68,10 +68,9 @@ int wh_w8760_dev_set_feature(WDT_DEV* pdev, BYTE* buf, UINT32 buf_size)
 	if (!pdev)
 		return 0;
 
-	if (buf[0] == W8760_COMMAND9 || buf[0] == W8760_PIPE9)
+	if (buf[0] == W8760_COMMAND9)
 		buf_size = 10;
-	else if (buf[0] == W8760_COMMAND63 || buf[0] == W8760_PIPE63 || 
-		buf[0] == W8760_BLOCK63 )
+	else if (buf[0] == W8760_COMMAND63)
 		buf_size = 64;
 	else {
 		wh_printf("Feature id is not supported! (%d)\n", buf[0]);
@@ -91,10 +90,9 @@ int wh_w8760_dev_get_feature(WDT_DEV* pdev, BYTE* buf, UINT32 buf_size)
 	if (!pdev)
 		return 0;
 
-	if (buf[0] == W8760_COMMAND9 || buf[0] == W8760_PIPE9)
+	if (buf[0] == W8760_COMMAND9)
 		buf_size = 10;
-	else if (buf[0] == W8760_COMMAND63 || buf[0] == W8760_PIPE63 || 
-		buf[0] == W8760_BLOCK63 || buf[0] == VND_REQ_DEV_INFO)
+	else if (buf[0] == W8760_COMMAND63 || buf[0] == VND_REQ_DEV_INFO)
 		buf_size = 64;
 	else {
 		wh_printf("Feature id is not supported! (%d)\n", buf[0]);
@@ -221,15 +219,8 @@ int wh_w8760_dev_reboot(WDT_DEV* pdev)
 	return wh_w8760_dev_command_write(pdev, cmd, 0, sizeof(cmd));	
 }
 
-int wh_w8760_dev_run_program_from_background(WDT_DEV* pdev, UINT32 program_address)
-{
-	BYTE cmd[2 + 4 + 4];
-	cmd[0] = W8760_COMMAND63;
-	cmd[1] = W8760_RUN_PROGRAM_FORM_BACKGROUND;
-	put_unaligned_le32(program_address, &cmd[2]);
-	put_unaligned_le32(0, &cmd[6]);
-	return wh_w8760_dev_command_write(pdev, cmd, 0, sizeof(cmd));	
-}
+
+
 
 int wh_w8760_dev_get_hid_descriptor_register(WDT_DEV* pdev, UINT16* pvalue)
 {
@@ -956,23 +947,5 @@ int wh_w8760_get_rom_signature(int type, BYTE* buf)
 
 }
 
-
-int wh_w8762_isp_rerun_recovery(WDT_DEV *pdev)
-{
-        wh_printf("It is maybe WDT8762 ISP\n");
-        wh_w8760_dev_set_men_address(pdev, 0xA022750A);
-        wh_w8760_dev_write_men_halfword(pdev, 0);
-        wh_w8760_dev_run_program_from_background(pdev, 0x061000);
-        wh_printf("Rerun Recovery fw \n");
-        return 1;
-}
-
-int wh_w8760_isp_rerun_recovery(WDT_DEV *pdev)
-{
-        wh_printf("It is maybe WDT8760 ISP\n");
-        wh_w8760_dev_run_program_from_background(pdev, 0x061000);
-        wh_printf("Rerun Recovery fw \n");
-        return 1;
-}
 
 

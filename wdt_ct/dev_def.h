@@ -52,7 +52,6 @@
 #define 	GD_DEVICE          	0x01
 #define 	GD_STRING          	0x03
 
-#define		STRIDX_PARAMETERS	0x81
 
 #define 	VND_REQ_DEV_INFO	0xF2
 #define		WDT_PAGE_SIZE		0x1000
