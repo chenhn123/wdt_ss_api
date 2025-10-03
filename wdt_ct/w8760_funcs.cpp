@@ -222,18 +222,6 @@ int wh_w8760_dev_reboot(WDT_DEV* pdev)
 
 
 
-int wh_w8760_dev_get_hid_descriptor_register(WDT_DEV* pdev, UINT16* pvalue)
-{
-	BYTE cmd[] = { W8760_COMMAND9, W8760_GET_HID_DESCRIPTOR_REGISTER };
-	BYTE buf[4];
-
-	*pvalue = 0x20;
-	if (wh_w8760_dev_command_read(pdev, cmd, sizeof(cmd), buf, 0, 2) <= 0)
-		return 0;
-
-	*pvalue = get_unaligned_le16(buf);
-	return 1;
-}
 
 int wh_w8760_dev_read_buf_response(WDT_DEV* pdev, BYTE* data, int size)
 {
@@ -308,18 +296,7 @@ int wh_w8760_dev_set_address(WDT_DEV* pdev, BYTE type, UINT32 address)
 	return wh_w8760_dev_command_write(pdev, cmd, 0, 6);
 }
 
-int wh_w8760_dev_write_men_halfword(WDT_DEV* pdev, UINT16 hwords)
-{
-	BYTE buf[2];
-	put_unaligned_le16(hwords, &buf[0]);
 
-	return wh_w8760_dev_write_array(pdev, W8760_WRITE_HALFWORDS, buf, 0, sizeof(BYTE), 2);
-}
-
-int wh_w8760_dev_set_men_address(WDT_DEV* pdev, UINT32 address)
-{
-	return wh_w8760_dev_set_address(pdev, W8760_SET_MEMORY_ADDRESS, address);
-}
 
 int wh_w8760_dev_set_flash_address(WDT_DEV* pdev, UINT32 address)
 {
