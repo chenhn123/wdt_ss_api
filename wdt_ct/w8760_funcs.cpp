@@ -257,7 +257,7 @@ int wh_w8760_dev_set_n_check_device_mode(WDT_DEV* pdev, BYTE mode, int timeout_m
 	int polling_intv_ms = 5;
 
 	/* if device in isp mode, just return */
-	if (pdev->board_info.dev_type & FW_WDT8760_2_ISP)
+	if (pdev->board_info.dev_type & FW_MAYBE_ISP)
 		return 1;
 
 	if (timeout_ms)
@@ -672,12 +672,21 @@ int wh_w8760_dev_get_context(WDT_DEV* pdev, W8760_PCT_DATA* pPct)
 	return 1;
 }
 
+int wh_w8760_dev_get_parameter_table_state(WDT_DEV* pdev) {
+        BYTE buf[4] = {0};
+
+        if (wh_w8760_dev_get_device_status(pdev, buf, 0, 4) <= 0)
+                return -1;
+        UINT32 status =  get_unaligned_le32(buf);
+        unsigned short type = (status >> 2) & 3;
+        return type;
+}
+
+
 int wh_w8760_prepare_data(WDT_DEV* pdev, BOARD_INFO* p_out_board_info)
 {
 	if (!pdev || !p_out_board_info)
 		return 0;
-
-	W8760_PCT_DATA	pct_data;
 
 	/* initialize the basic function for handling the following operations */
 	wh_w8760_dev_set_basic_op(pdev);
@@ -690,24 +699,11 @@ int wh_w8760_prepare_data(WDT_DEV* pdev, BOARD_INFO* p_out_board_info)
 	memcpy(&p_out_board_info->device_name[8], pdev->board_info.dev_info.w8760_feature_devinfo.part_number_ext, 8);
 
 	
-	if (p_out_board_info->dev_type & FW_WDT8760_2_ISP)
-		return 1;
+	int p_table_state;
+	p_table_state = wh_w8760_dev_get_parameter_table_state(pdev);
+	if(p_table_state != 1)
+		p_out_board_info->serial_no = 0;
 
-	if (wh_w8760_dev_get_context(pdev, &pct_data)) {
-		/* set the default values */
-		p_out_board_info->sys_param.Phy_Frmbuf_W= pct_data.n_cs;
-		p_out_board_info->sys_param.Phy_X0= pct_data.x1;
-		p_out_board_info->sys_param.Phy_X1= pct_data.xn;
-
-		p_out_board_info->sys_param.Phy_Frmbuf_H= pct_data.n_cd;
-		p_out_board_info->sys_param.Phy_Y0= pct_data.y1;
-		p_out_board_info->sys_param.Phy_Y1= pct_data.yn;
-		
-		p_out_board_info->sys_param.xmls_id1 = 0;
-		p_out_board_info->sys_param.xmls_id2 = 0;
-
-		return 1;
-	}
 
 	return 1;
 }

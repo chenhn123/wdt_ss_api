@@ -1150,6 +1150,19 @@ exit_fun:
 
 }
 
+
+int wh_w8790_dev_get_parameter_table_state(WDT_DEV* pdev) {
+        BYTE buf[4] = {0};
+
+        if (wh_w8790_dev_get_device_status(pdev, buf, 0, 4) <= 0)
+                return -1;
+        UINT32 status =  get_unaligned_le32(buf);
+        unsigned short type = (status >> 2) & 3;
+        return type;
+}
+
+
+
 int wh_w8790_prepare_data(WDT_DEV* pdev, BOARD_INFO* p_out_board_info)
 {
 	if (!pdev || !p_out_board_info)
@@ -1175,32 +1188,13 @@ int wh_w8790_prepare_data(WDT_DEV* pdev, BOARD_INFO* p_out_board_info)
 
 	}
 
+	int p_table_state;
+	p_table_state = wh_w8790_dev_get_parameter_table_state(pdev);
+	if(p_table_state != 1)
+		p_out_board_info->serial_no = 0;
+	return 1;
 
-	W8790_PCT pct_data;
 
-
-	if (wh_w8790_dev_get_context(pdev, &pct_data)) {
-		// set the default values
-		p_out_board_info->sys_param.Phy_Frmbuf_W = pct_data.n_cs;
-		p_out_board_info->sys_param.Phy_X0 = pct_data.x1;
-		p_out_board_info->sys_param.Phy_X1 = pct_data.xn;
-
-		p_out_board_info->sys_param.Phy_Frmbuf_H = pct_data.n_cd;
-		p_out_board_info->sys_param.Phy_Y0 = pct_data.y1;
-		p_out_board_info->sys_param.Phy_Y1 = pct_data.yn;
-
-		p_out_board_info->sys_param.xmls_id2 = 0;
-
-		W8790_PARAMETER_INFO parameter_info;
-		wh_w8790_dev_read_parameter_table_info(pdev, &parameter_info);
-		UINT32 cksum;
-		wh_w8790_dev_read_parameters_get_checksum(pdev, parameter_info, &cksum);
-		p_out_board_info->sys_param.xmls_id1 = cksum;
-
-		return 1;
-	}
-
-	return 0;
 }
 
 

@@ -291,7 +291,7 @@ int wh_hidraw_prepare_data(WDT_DEV *pdev, BOARD_INFO* p_out_board_info)
 	}
 
 	// we don't need this check here or it will get failed
-	if (!(board_info.dev_type & ( FW_WDT8760_2_ISP))) {
+	if (!(board_info.dev_type &( FW_MAYBE_ISP))) {
 		board_info.firmware_id = id;
 		board_info.hardware_id = get_unaligned_le32(buf + 5);
 		board_info.serial_no = get_unaligned_le32(buf + 9);
