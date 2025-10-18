@@ -281,7 +281,7 @@ int wh_hidraw_prepare_data(WDT_DEV *pdev, BOARD_INFO* p_out_board_info)
 
         if ((buf[0x26] == 0x49 && buf[0x27] == 0x53 && buf[0x28] == 0x50)) {
 			printf("It is maybe WDT8760 ISP\n");
-			board_info.dev_type = FW_WDT8760_2_ISP;
+			board_info.dev_type = FW_MAYBE_ISP;
 		}
 	}		
 		

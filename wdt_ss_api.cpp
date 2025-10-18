@@ -31,30 +31,62 @@ int wdt_ss_get_api_version(void)
 
 int wdt_ss_update_firmware(char* path)
 {
-	return update_firmware_internal(path);
+	int ret = update_firmware_internal(path);
+	if(ret == 1)
+		return 0;
+	else if(ret == 0)
+		return 1;
+	else 
+		return ret;
 }
 
 
 int wdt_ss_verify_firmware(char* path)
 {
-	return verify_firmware_internal(path);
+	int ret = verify_firmware_internal(path);
+	if(ret == 1)
+		return 0;
+	else if(ret == 0)
+		return 1;
+	else 
+		return ret;
+
 }
 
 
 int wdt_ss_get_current_firmware_version(unsigned int* version)
 {
-	return get_current_firmware_version_internal(version);
+	int ret = get_current_firmware_version_internal(version);
+	if(ret == 1)
+		return 0;
+	else if(ret == 0)
+		return 1;
+	else 
+		return ret;
 }
 
 
 int wdt_ss_get_device_name(char* name, size_t max_len)
 {
-	return get_device_name_internal(name, max_len);
+	int ret = get_device_name_internal(name, max_len);
+	if(ret == 1)
+		return 0;
+	else if(ret == 0)
+		return 1;
+	else 
+		return ret;
+
 }
 
 int wdt_ss_get_vid_pid(unsigned int* vid, unsigned int* pid)
 {
-    	return  get_vid_pid_internal(vid, pid);
+	int ret = get_vid_pid_internal(vid, pid);
+	if(ret == 1)
+		return 0;
+	else if(ret == 0)
+		return 1;
+	else 
+		return ret;
 }
 
 
