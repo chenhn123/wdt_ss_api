@@ -23,7 +23,7 @@
 
 #define WDT_SS_API_VERSION_MAJOR 1
 #define WDT_SS_API_VERSION_MINOR 0
-#define WDT_SS_API_VERSION_PATCH 2
+#define WDT_SS_API_VERSION_PATCH 3
 
 #define WDT_SS_API_VERSION \
     ((WDT_SS_API_VERSION_MAJOR << 16) | (WDT_SS_API_VERSION_MINOR << 8) | WDT_SS_API_VERSION_PATCH)
@@ -52,6 +52,7 @@ int wdt_ss_get_api_version(void);
  */
 __attribute__((visibility("default")))
 int wdt_ss_update_firmware(char* path);
+
 /**
  * \brief        Verifies the Wedia Touch controller firmware.
  * \details      This function loads the firmware binary from the specified file path and
@@ -62,16 +63,18 @@ int wdt_ss_update_firmware(char* path);
  */
 __attribute__((visibility("default")))
 int wdt_ss_verify_firmware(char* path);
+
 /**
  * \brief        Retrieves the current firmware version of the Wedia Touch controller.
  * \details      The version is returned as a 32-bit encoded integer, where the
  *               higher bytes typically represent the major, minor, and patch versions.
  *               The exact encoding scheme should be consistent with the API's versioning format.
- * \param[out] version Pointer to a 32-bit unsigned integer where the encoded firmware version will be stored.
+ * \param[out]   version Pointer to a 32-bit unsigned integer to receive the firmware version.
  * \return       Zero on success, non-zero error code on failure.
  */
 __attribute__((visibility("default")))
 int wdt_ss_get_current_firmware_version(unsigned int* version);
+
 /**
  * \brief        Retrieves the name of the connected Wedia Touch device.
  * \details      This function fills the provided buffer with the name of the connected device.
@@ -99,9 +102,37 @@ int wdt_ss_get_device_name(char* name, size_t max_len);
  *
  * \return       Zero on success, non-zero error code on failure.
  */
-
 __attribute__((visibility("default")))
 int wdt_ss_get_vid_pid(unsigned int* vid, unsigned int* pid);
+
+/**
+ * \brief        Retrieves the Hardware ID of the connected Wedia Touch device.
+ * \details      This function fills the provided pointers with the Hardware ID
+ *               of the currently connected device. These identifiers are commonly used to distinguish
+ *               between different USB devices.
+ *
+ * \param[out]   hardware_id Pointer to a 32-bit unsigned integer where the Hardware ID will be stored.
+ *
+ * \return       Zero on success, non-zero error code on failure.
+ */
+__attribute__((visibility("default")))
+int wdt_ss_get_hardware_id(unsigned int* hardware_id);
+
+/**
+ * \brief        Retrieves detailed information about the connected Wedia Touch device.
+ * \details      This function fills the provided pointers with the device's
+ *               Vendor ID (VID), Product ID (PID), Hardware ID, and firmware version.
+ *               These identifiers are typically used for USB device recognition and compatibility checks.
+ *
+ * \param[out]   vid         Pointer to a 32-bit unsigned integer to receive the Vendor ID.
+ * \param[out]   pid         Pointer to a 32-bit unsigned integer to receive the Product ID.
+ * \param[out]   hardware_id Pointer to a 32-bit unsigned integer to receive the Hardware ID.
+ * \param[out]   version     Pointer to a 32-bit unsigned integer to receive the firmware version.
+ *
+ * \return       Zero on success, non-zero error code on failure.
+ */
+__attribute__((visibility("default")))
+int wdt_ss_get_device_info(unsigned int* vid, unsigned int* pid, unsigned int* hardware_id, unsigned int* version);
 
 
 #ifdef __cplusplus

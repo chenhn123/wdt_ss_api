@@ -887,12 +887,7 @@ int wh_w8760_dev_program_chunk(WDT_DEV* pdev, CHUNK_INFO_EX* pInputChunk, int op
 	if (!pdev)
 		return 0;
 	
-	if (pdev->pparam->argus & OPTION_BLOCK)
-		return wh_w8760_dev_program_chunk_verify(pdev, pInputChunk, option);
-	else
-		return wh_w8760_dev_program_4k_chunk_verify(pdev, pInputChunk, option);
-
-	return 1;
+	return wh_w8760_dev_program_4k_chunk_verify(pdev, pInputChunk, option);
 }
 
 int wh_w8760_get_rom_signature(int type, BYTE* buf)

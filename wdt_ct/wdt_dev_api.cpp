@@ -374,22 +374,6 @@ void close_device(WDT_DEV *pdev)
 
 
 
-int config_id_check(EXEC_PARAM *pparam, BOARD_INFO *pinfo, CHUNK_INFO_EX *pchunk_info)
-{
-	if (!pparam || !pinfo || !pchunk_info)
-		return 0;
-
-	unsigned int 	xmlId = 0;
-
-	if (pchunk_info->chuckInfo.attribute & 0x2)
-		xmlId = pchunk_info->chuckInfo.versionNumber;
-
-	wh_printf("The config data in dev: %04x, wif: %04x\n", xmlId, pinfo->sys_param.xmls_id1);
-	if (xmlId == pinfo->sys_param.xmls_id1) 
-		return 2;
-
-	return 1;
-}
 
 int program_one_chunk(WDT_DEV *pdev, const char *chunk_name, UINT32 chunk_id, UINT32 option, CHUNK_INFO_EX *pinfo)
 {
@@ -427,7 +411,7 @@ int program_one_chunk(WDT_DEV *pdev, const char *chunk_name, UINT32 chunk_id, UI
 
 int image_file_check(WDT_DEV *pdev, EXEC_PARAM *pparam)
 {
-	int 			err = 1;
+	int err = 1;
 	if (!pdev)
 		return -1;
 
@@ -686,7 +670,7 @@ exit_burn:
 
 int show_info(WDT_DEV *pdev, EXEC_PARAM *pparam)
 {
-	BOARD_INFO	*pinfo = &pdev->board_info;	
+	BOARD_INFO *pinfo = &pdev->board_info;	
 	int ret = 0;
 
 	if (!pdev || !pparam)
@@ -701,32 +685,9 @@ int show_info(WDT_DEV *pdev, EXEC_PARAM *pparam)
 		goto info_exit;
 
 
-	if (pparam->argus & OPTION_FW_VER) {
-		if (pparam->argus & OPTION_HW_ID)
-			printf("_");
-
-		if (pdev->board_info.dev_type & FW_WDT8755) {
-			printf("%04x", pinfo->firmware_id & 0xFFFF);
-        	} else if (pdev->board_info.dev_type & FW_WDT8760_2) {
-        		int fwrev = pinfo->dev_info.w8760_feature_devinfo.firmware_id & 0x0FFF;
-        		int fwrexext = pinfo->dev_info.w8760_feature_devinfo.firmware_rev_ext & 0x000F;
-        		int versionOuput = (fwrev << 4 | fwrexext);
-			wh_printf("%04x", versionOuput);
-		}
-		else if (pdev->board_info.dev_type & FW_WDT8790) {
-			int fwrev = pinfo->dev_info.w8790_feature_devinfo.firmware_version & 0x0FFF;
-                        int fwrexext = pinfo->dev_info.w8790_feature_devinfo.firmware_revision_ext & 0x000F;
-                        int versionOuput = (fwrev << 4 | fwrexext);
-                        wh_printf("%04x", versionOuput);
-
-		}
-	}	
-		
-	
 	if (ret) {
 		wh_printf("Vendor_ID: 0x%04x\n", pinfo->vid);
 		wh_printf("Product_ID: 0x%04x\n", pinfo->pid);
-		wh_printf("Firmware_ID: 0x%x\n", pinfo->firmware_id);
 		wh_printf("Hardware_ID: 0x%x\n", pinfo->hardware_id);		
 		wh_printf("Serial_No: 0x%x\n", pinfo->serial_no);
 	} 

@@ -126,7 +126,7 @@ int wh_w8790_parse_device_info(W8790_DEV_INFO* report_feature_devinfo, BYTE* buf
 int wh_w8790_dev_identify_platform(WDT_DEV* pdev)
 {
 	// identify chip by reading its ROM.
-	if (!pdev )
+	if (!pdev)
 		return 0;
 
 	if (memcmp(W8790_RomSignatureVerA, pdev->board_info.dev_info.w8790_feature_devinfo.rom_signature, 8) == 0) {

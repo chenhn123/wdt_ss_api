@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2025 Randy L.
  * Copyright (C) 2017 Chen Hung-Nien
  * Copyright (C) 2017 Weida Hi-Tech
  *
@@ -27,15 +28,9 @@
 #define		OPTION_EXTRA_INFO		0x10
 #define 	OPTION_NO_RPARAM		0x20
 #define		OPTION_NO_REBIND		0x40
-#define 	OPTION_BLOCK			0x80
 
-/* define for wif file */
-#define		OPTION_WIF_INFO			0x100
 
 /* define for info from the device */
-#define		OPTION_FW_VER			0x1000
-#define		OPTION_CFG_CHKSUM		0x2000
-#define		OPTION_HW_ID			0x4000
 
 
 int		load_lib_func_address(WDT_DEV*, EXEC_PARAM*);
@@ -43,7 +38,6 @@ int		image_file_burn_data_verify(WDT_DEV *pdev, EXEC_PARAM *pParam);
 int 		show_wif_info(WDT_DEV *pdev, EXEC_PARAM *pparam);
 int		show_info(WDT_DEV *pdev, EXEC_PARAM *pParam);
 int		image_file_check(WDT_DEV *pdev, EXEC_PARAM *pParam);
-int		rebind_driver(WDT_DEV *pdev);
 
 void 		wh_printf(const char *fmt, ...);
 void 		wh_sleep(int ms);
@@ -55,6 +49,8 @@ int verify_firmware_internal(char *path);
 int get_vid_pid_internal(unsigned int *vid, unsigned int *pid);
 int get_current_firmware_version_internal(unsigned int *version);
 int get_device_name_internal(char *name, size_t max_len);
+int get_hardware_id_internal(unsigned int *hw_id);
+int get_device_info_internal(unsigned int *vid, unsigned int *pid, unsigned int *hw_id, unsigned int *version);
 
 
 

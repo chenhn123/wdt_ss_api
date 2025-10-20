@@ -6,7 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Add initialize to *dir.
+## [1.0.3] - 2025-10-20
+### Added
+- Add API:wdt_ss_get_hardware_id.
+- Add API:wdt_ss_get_device_info.
+### Removed
+- Remove unused option and function.
+
+
 
 
 

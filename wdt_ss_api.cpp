@@ -90,3 +90,27 @@ int wdt_ss_get_vid_pid(unsigned int* vid, unsigned int* pid)
 }
 
 
+int wdt_ss_get_hardware_id(unsigned int* hardware_id)
+{
+	int ret = get_hardware_id_internal(hardware_id);
+	if(ret == 1)
+		return 0;
+	else if(ret == 0)
+		return 1;
+	else 
+		return ret;
+}
+
+int wdt_ss_get_device_info(unsigned int *vid, unsigned int *pid, unsigned int* hardware_id, unsigned int* version)
+{
+	int ret = get_device_info_internal(vid, pid, hardware_id, version);
+	if(ret == 1)
+		return 0;
+	else if(ret == 0)
+		return 1;
+	else
+		return ret;
+
+}
+
+

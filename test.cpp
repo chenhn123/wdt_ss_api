@@ -33,11 +33,23 @@ int main(int argc, char *argv[]) {
 	unsigned int pid = 0;
 	ret = wdt_ss_get_vid_pid(&vid, &pid);
 	
-	printf("vid,pid: 0x%x, 0x%x, ret:%d \n", vid, pid, ret);
+	printf("vid: 0x%x, pid: 0x%x, ret: %d \n", vid, pid, ret);
 
 	unsigned int fw_version = 0;
 	ret = wdt_ss_get_current_firmware_version(&fw_version);
-	printf("FW version:0x%x ret:%d \n", fw_version, ret);
+	printf("FW version:0x%x, ret:%d \n", fw_version, ret);
+
+	unsigned int hw_id = 0;
+	ret = wdt_ss_get_hardware_id(&hw_id);
+	printf("hardware ID:0x%x, ret:%d \n", hw_id, ret);
+
+
+	ret = wdt_ss_get_device_info(&vid, &pid, &hw_id, &fw_version);
+	printf("vid:0x%x, pid:0x%x, hardware ID:0x%x, fw_verison:0x%x, ret:%d\n",vid, pid, hw_id, fw_version, ret);
+
+
+
+
 
 	char name[9];
 	ret = wdt_ss_get_device_name(name, 16);

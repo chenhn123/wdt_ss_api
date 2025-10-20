@@ -92,7 +92,6 @@ int update_firmware_internal(char* path)
 {
 	
 	int		ret = 0;
-	int		info_mask = OPTION_FW_VER | OPTION_CFG_CHKSUM | OPTION_HW_ID;
 	EXEC_PARAM	exec_param;
 	WDT_DEV		wdt_dev;
 	int (*LPFUNC_execution)(WDT_DEV*, EXEC_PARAM*);
@@ -121,10 +120,6 @@ int update_firmware_internal(char* path)
 	LPFUNC_execution = NULL;
 	if (exec_param.argus & OPTION_UPDATE)
 		LPFUNC_execution = image_file_burn_data_verify; 
-	else if (exec_param.argus & (info_mask | OPTION_INFO))
-		LPFUNC_execution = show_info; 
-	else if (exec_param.argus & OPTION_WIF_INFO)
-		LPFUNC_execution = show_wif_info; 
 	
 	if (LPFUNC_execution)
 		ret = LPFUNC_execution(&wdt_dev, &exec_param);
@@ -137,9 +132,7 @@ int update_firmware_internal(char* path)
 
 int verify_firmware_internal(char* path)
 {
-	
 	int		ret = 0;
-	int		info_mask = OPTION_FW_VER | OPTION_CFG_CHKSUM | OPTION_HW_ID;
 	EXEC_PARAM	exec_param;
 	WDT_DEV		wdt_dev;
 	int (*LPFUNC_execution)(WDT_DEV*, EXEC_PARAM*);
@@ -166,13 +159,7 @@ int verify_firmware_internal(char* path)
 	wdt_dev.pparam = &exec_param;
 
 	LPFUNC_execution = NULL;
-	if (exec_param.argus & OPTION_UPDATE)
-		LPFUNC_execution = image_file_burn_data_verify; 
-	else if (exec_param.argus & (info_mask | OPTION_INFO))
-		LPFUNC_execution = show_info; 
-	else if (exec_param.argus & OPTION_WIF_INFO)
-		LPFUNC_execution = show_wif_info; 
-	else if (exec_param.argus & OPTION_VERIFY)
+	if (exec_param.argus & OPTION_VERIFY)
 		LPFUNC_execution = image_file_check;
 	
 	if (LPFUNC_execution)
@@ -186,7 +173,6 @@ int verify_firmware_internal(char* path)
 int get_device_name_internal(char *name, size_t max_len)
 {
 	int		ret = 0;
-	int		info_mask = OPTION_FW_VER | OPTION_CFG_CHKSUM | OPTION_HW_ID;
 	EXEC_PARAM	exec_param;
 	WDT_DEV		wdt_dev;
 	int (*LPFUNC_execution)(WDT_DEV*, EXEC_PARAM*);
@@ -211,12 +197,8 @@ int get_device_name_internal(char *name, size_t max_len)
 	wdt_dev.pparam = &exec_param;
 
 	LPFUNC_execution = NULL;
-	if (exec_param.argus & OPTION_UPDATE)
-		LPFUNC_execution = image_file_burn_data_verify; 
-	else if (exec_param.argus & (info_mask | OPTION_INFO))
+	if (exec_param.argus & OPTION_INFO)
 		LPFUNC_execution = show_info; 
-	else if (exec_param.argus & OPTION_WIF_INFO)
-		LPFUNC_execution = show_wif_info; 
 	
 	if (LPFUNC_execution)
 		ret = LPFUNC_execution(&wdt_dev, &exec_param);
@@ -224,7 +206,7 @@ int get_device_name_internal(char *name, size_t max_len)
 	if (name == NULL) {
         	return -1; // handle error safely
 	}
-	memcpy(name, wdt_dev.board_info.device_name ,max_len);
+	memcpy(name, wdt_dev.board_info.device_name, max_len);
 
 
 	
@@ -237,7 +219,6 @@ int get_device_name_internal(char *name, size_t max_len)
 int get_current_firmware_version_internal(unsigned int *version)
 {
 	int		ret = 0;
-	int		info_mask = OPTION_FW_VER | OPTION_CFG_CHKSUM | OPTION_HW_ID;
 	EXEC_PARAM	exec_param;
 	WDT_DEV		wdt_dev;
 	int (*LPFUNC_execution)(WDT_DEV*, EXEC_PARAM*);
@@ -262,12 +243,8 @@ int get_current_firmware_version_internal(unsigned int *version)
 	wdt_dev.pparam = &exec_param;
 
 	LPFUNC_execution = NULL;
-	if (exec_param.argus & OPTION_UPDATE)
-		LPFUNC_execution = image_file_burn_data_verify; 
-	else if (exec_param.argus & (info_mask | OPTION_INFO))
+	if (exec_param.argus & OPTION_INFO)
 		LPFUNC_execution = show_info; 
-	else if (exec_param.argus & OPTION_WIF_INFO)
-		LPFUNC_execution = show_wif_info; 
 	
 	if (LPFUNC_execution)
 		ret = LPFUNC_execution(&wdt_dev, &exec_param);
@@ -286,7 +263,6 @@ int get_current_firmware_version_internal(unsigned int *version)
 int get_vid_pid_internal(unsigned int *vid, unsigned int *pid)
 {
 	int		ret = 0;
-	int		info_mask = OPTION_FW_VER | OPTION_CFG_CHKSUM | OPTION_HW_ID;
 	EXEC_PARAM	exec_param;
 	WDT_DEV		wdt_dev;
 	int (*LPFUNC_execution)(WDT_DEV*, EXEC_PARAM*);
@@ -311,14 +287,8 @@ int get_vid_pid_internal(unsigned int *vid, unsigned int *pid)
 	wdt_dev.pparam = &exec_param;
 
 	LPFUNC_execution = NULL;
-	if (exec_param.argus & OPTION_UPDATE)
-		LPFUNC_execution = image_file_burn_data_verify; 
-	else if (exec_param.argus & (info_mask | OPTION_INFO))
+	if (exec_param.argus & OPTION_INFO)
 		LPFUNC_execution = show_info; 
-	else if (exec_param.argus & OPTION_WIF_INFO)
-		LPFUNC_execution = show_wif_info; 
-	else if (exec_param.argus & OPTION_VERIFY)
-		LPFUNC_execution = image_file_check;
 
 	if (LPFUNC_execution)
 		ret = LPFUNC_execution(&wdt_dev, &exec_param);
@@ -334,3 +304,102 @@ int get_vid_pid_internal(unsigned int *vid, unsigned int *pid)
 	return ret;
 
 }
+
+
+
+
+int get_hardware_id_internal(unsigned int *hw_id)
+{
+	int		ret = 0;
+	EXEC_PARAM	exec_param;
+	WDT_DEV		wdt_dev;
+	int (*LPFUNC_execution)(WDT_DEV*, EXEC_PARAM*);
+
+	memset((void*) &exec_param, 0, sizeof(EXEC_PARAM));
+	exec_param.interface_num = INTERFACE_HIDRAW;
+	exec_param.argus |= OPTION_INFO;
+
+
+	if (!check_privilege()) {
+		printf("Must be a root to run this program!\n");
+		return 0;
+	}
+
+	memset(&wdt_dev, 0, sizeof(WDT_DEV));
+	
+	if (!load_lib_func_address(&wdt_dev, &exec_param)) {
+		printf("Load function table failed !\n");
+		return 0;
+	}
+
+	wdt_dev.pparam = &exec_param;
+
+	LPFUNC_execution = NULL;
+
+	if (exec_param.argus & OPTION_INFO)
+		LPFUNC_execution = show_info; 
+
+	if (LPFUNC_execution)
+		ret = LPFUNC_execution(&wdt_dev, &exec_param);
+	
+	if (hw_id == NULL) {
+        	return -1; // handle error safely
+	}
+
+	*hw_id = wdt_dev.board_info.hardware_id;
+	
+	return ret;
+
+}
+
+
+int get_device_info_internal(unsigned int *vid, unsigned int *pid, unsigned int *hw_id, unsigned int *version)
+{
+	int		ret = 0;
+	EXEC_PARAM	exec_param;
+	WDT_DEV		wdt_dev;
+	int (*LPFUNC_execution)(WDT_DEV*, EXEC_PARAM*);
+
+	memset((void*) &exec_param, 0, sizeof(EXEC_PARAM));
+	exec_param.interface_num = INTERFACE_HIDRAW;
+	exec_param.argus |= OPTION_INFO;
+
+
+	if (!check_privilege()) {
+		printf("Must be a root to run this program!\n");
+		return 0;
+	}
+
+	memset(&wdt_dev, 0, sizeof(WDT_DEV));
+	
+	if (!load_lib_func_address(&wdt_dev, &exec_param)) {
+		printf("Load function table failed !\n");
+		return 0;
+	}
+
+	wdt_dev.pparam = &exec_param;
+
+	LPFUNC_execution = NULL;
+
+	if (exec_param.argus & OPTION_INFO)
+		LPFUNC_execution = show_info; 
+
+	if (LPFUNC_execution)
+		ret = LPFUNC_execution(&wdt_dev, &exec_param);
+	
+	if (hw_id == NULL) {
+        	return -1; // handle error safely
+	}
+
+	*hw_id = wdt_dev.board_info.hardware_id;
+	*vid = wdt_dev.board_info.vid;
+	*pid = wdt_dev.board_info.pid;
+	*version = wdt_dev.board_info.serial_no;
+	
+	
+	return ret;
+
+}
+
+
+
