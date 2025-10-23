@@ -25,9 +25,6 @@
 #define		OPTION_VERIFY			0x2
 #define		OPTION_NO_FORCE			0x4
 #define		OPTION_INFO			0x8
-#define		OPTION_EXTRA_INFO		0x10
-#define 	OPTION_NO_RPARAM		0x20
-#define		OPTION_NO_REBIND		0x40
 
 
 /* define for info from the device */
@@ -51,6 +48,7 @@ int get_current_firmware_version_internal(unsigned int *version);
 int get_device_name_internal(char *name, size_t max_len);
 int get_hardware_id_internal(unsigned int *hw_id);
 int get_device_info_internal(unsigned int *vid, unsigned int *pid, unsigned int *hw_id, unsigned int *version);
+int get_boot_mode_internal(unsigned int *mode);
 
 
 

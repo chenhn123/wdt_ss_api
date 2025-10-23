@@ -23,7 +23,7 @@
 
 #define WDT_SS_API_VERSION_MAJOR 1
 #define WDT_SS_API_VERSION_MINOR 0
-#define WDT_SS_API_VERSION_PATCH 3
+#define WDT_SS_API_VERSION_PATCH 4
 
 #define WDT_SS_API_VERSION \
     ((WDT_SS_API_VERSION_MAJOR << 16) | (WDT_SS_API_VERSION_MINOR << 8) | WDT_SS_API_VERSION_PATCH)
@@ -133,6 +133,24 @@ int wdt_ss_get_hardware_id(unsigned int* hardware_id);
  */
 __attribute__((visibility("default")))
 int wdt_ss_get_device_info(unsigned int* vid, unsigned int* pid, unsigned int* hardware_id, unsigned int* version);
+
+/**
+ * \brief        Retrieves whether the device is currently in boot mode.
+ * \details      Reads the device status and stores the boot mode flag in \p mode.
+ *               The meaning of the value is as follows:
+ *               - 0 : Device is in normal operating mode
+ *               - 1 : Device is in boot mode
+ *
+ * \param[out]   mode  Pointer to an unsigned integer that receives the boot mode flag.
+ *                     Must not be NULL.
+ *
+ * \return       0 on success,
+ *               non-zero error code on failure.
+ */
+__attribute__((visibility("default")))
+int wdt_ss_get_boot_mode(unsigned int *mode);
+
+
 
 
 #ifdef __cplusplus

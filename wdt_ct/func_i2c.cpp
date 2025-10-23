@@ -56,7 +56,6 @@ int wh_i2c_scan_driver_path(WDT_DEV* pdev, int *adaptor_no)
 			if (dev_addr == DEFAULT_I2C_ADDR) {
 				found = 1;
 				pdev->board_info.i2c_address = DEFAULT_I2C_ADDR;
-				pdev->is_legacy = 1;
 				break;	
 			}
 		}

@@ -141,7 +141,6 @@ typedef struct WifAccess {
 
 typedef struct WdtDevice {
 	UINT32				intf_index;
-	UINT32				is_legacy;
 	UINT32				adaptor_no;
 	char				dev_path[64];
 	WH_HANDLE			dev_handle;

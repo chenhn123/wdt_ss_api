@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [1.0.4] - 2025-10-23
+### Added
+- Add API:wdt_ss_get_boot_mode
+### Removed
+- Remove unused option and function.
+
+
 ## [1.0.3] - 2025-10-20
 ### Added
 - Add API:wdt_ss_get_hardware_id.

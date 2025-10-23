@@ -688,6 +688,7 @@ int wh_w8760_prepare_data(WDT_DEV* pdev, BOARD_INFO* p_out_board_info)
 	if (!pdev || !p_out_board_info)
 		return 0;
 
+
 	/* initialize the basic function for handling the following operations */
 	wh_w8760_dev_set_basic_op(pdev);
 
@@ -697,6 +698,19 @@ int wh_w8760_prepare_data(WDT_DEV* pdev, BOARD_INFO* p_out_board_info)
 	}
 	memcpy(p_out_board_info->device_name, pdev->board_info.dev_info.w8760_feature_devinfo.platform_id, 8);
 	memcpy(&p_out_board_info->device_name[8], pdev->board_info.dev_info.w8760_feature_devinfo.part_number_ext, 8);
+
+
+	if (pdev->board_info.dev_info.w8760_feature_devinfo.program_name_fourcc[0] == 'R' &&
+		pdev->board_info.dev_info.w8760_feature_devinfo.program_name_fourcc[1] == 'C' &&
+		pdev->board_info.dev_info.w8760_feature_devinfo.program_name_fourcc[2] == 'V' &&
+		pdev->board_info.dev_info.w8760_feature_devinfo.program_name_fourcc[3] == 'Y')
+	{
+		p_out_board_info->is_ss_boot_mode = 1;
+
+	}
+	else
+		p_out_board_info->is_ss_boot_mode = 0;
+
 
 	
 	int p_table_state;

@@ -403,3 +403,51 @@ int get_device_info_internal(unsigned int *vid, unsigned int *pid, unsigned int 
 
 
 
+int get_boot_mode_internal(unsigned int *mode)
+{
+	int		ret = 0;
+	EXEC_PARAM	exec_param;
+	WDT_DEV		wdt_dev;
+	int (*LPFUNC_execution)(WDT_DEV*, EXEC_PARAM*);
+
+	memset((void*) &exec_param, 0, sizeof(EXEC_PARAM));
+	exec_param.interface_num = INTERFACE_HIDRAW;
+	exec_param.argus |= OPTION_INFO;
+	*mode = 0;
+
+
+	if (!check_privilege()) {
+		printf("Must be a root to run this program!\n");
+		return 0;
+	}
+
+	memset(&wdt_dev, 0, sizeof(WDT_DEV));
+	
+	if (!load_lib_func_address(&wdt_dev, &exec_param)) {
+		printf("Load function table failed !\n");
+		return 0;
+	}
+
+	wdt_dev.pparam = &exec_param;
+
+	LPFUNC_execution = NULL;
+
+	if (exec_param.argus & OPTION_INFO)
+		LPFUNC_execution = show_info; 
+
+	if (LPFUNC_execution)
+		ret = LPFUNC_execution(&wdt_dev, &exec_param);
+	
+	if (mode == NULL) {
+        	return -1; // handle error safely
+	}
+
+	*mode = wdt_dev.board_info.is_ss_boot_mode;
+	
+	
+	return ret;
+
+}
+
+
+

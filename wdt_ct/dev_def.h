@@ -128,7 +128,7 @@ typedef	struct BoardInfo
 	UINT32			dev_type;
 	UINT32			vid;
 	UINT32			pid;
-	UINT32			i2c_dummy;
+	UINT32			is_ss_boot_mode;
 	UINT32			firmware_id;
 	UINT32			hardware_id;
 	UINT32			serial_no;

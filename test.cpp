@@ -49,11 +49,14 @@ int main(int argc, char *argv[]) {
 
 
 
-
-
-	char name[9];
+	char name[16]= {'\0'};
 	ret = wdt_ss_get_device_name(name, 16);
 	printf("device_name: %s \n", name);
+
+	unsigned int boot_mode = 0;
+	ret = wdt_ss_get_boot_mode(&boot_mode);
+	printf("boot mode %d, ret %d\n",boot_mode, ret);
+
 
 
 	if(argc < 2) {
@@ -87,7 +90,6 @@ int main(int argc, char *argv[]) {
 			printf("device fw and file fw mismatch\n");
 
 	}
-	
 	
 	return ret;
 }

@@ -1170,6 +1170,7 @@ int wh_w8790_prepare_data(WDT_DEV* pdev, BOARD_INFO* p_out_board_info)
 	wh_w8790_dev_set_basic_op(pdev);
 
 
+	p_out_board_info->is_ss_boot_mode = 0;
 
 	if (!wh_w8790_dev_identify_platform(pdev)) {
 		wh_printf("can't get platform identify!\n");
@@ -1187,11 +1188,18 @@ int wh_w8790_prepare_data(WDT_DEV* pdev, BOARD_INFO* p_out_board_info)
 		return 1;
 
 	}
+	else if (pdev->board_info.dev_info.w8790_feature_devinfo.program_name_fourcc[0] == 'R' &&
+		pdev->board_info.dev_info.w8790_feature_devinfo.program_name_fourcc[1] == 'C' &&
+		pdev->board_info.dev_info.w8790_feature_devinfo.program_name_fourcc[2] == 'V' &&
+		pdev->board_info.dev_info.w8790_feature_devinfo.program_name_fourcc[3] == 'Y')
+	{
+		p_out_board_info->is_ss_boot_mode = 1;
 
-	int p_table_state;
-	p_table_state = wh_w8790_dev_get_parameter_table_state(pdev);
-	if(p_table_state != 1)
-		p_out_board_info->serial_no = 0;
+	}
+
+
+
+		
 	return 1;
 
 

@@ -44,6 +44,7 @@
 
 #define		MAX_DEV			16
 #define 	VID_WEIDA 		0x2575
+#define 	VID_SS			0x04e8
 
 
 static char		g_dev_path[24] = "/dev/hidraw";
@@ -123,7 +124,7 @@ int  wh_hidraw_scan_device(WDT_DEV* pdev)
 		if (handle < 0) {
 			continue;
 		} else if (get_device_info(handle, &hidraw_info) > 0) {
-			if (hidraw_info.vendor == VID_WEIDA)	{
+			if (hidraw_info.vendor == VID_WEIDA || hidraw_info.vendor == VID_SS){
 				int res = ioctl(handle, HIDIOCGRAWPHYS(256), buf);
 				if (res < 0){
 					 perror("HIDIOCGRAWPHYS");
@@ -145,7 +146,6 @@ int  wh_hidraw_scan_device(WDT_DEV* pdev)
 			
 				strcpy(g_dev_path, deviceFile);
 				close(handle);
-				//pdev->bustype = hidraw_info.bustype;
 
 				g_dev_info[g_cur_dev_index].vid = hidraw_info.vendor;
 				g_dev_info[g_cur_dev_index].pid = hidraw_info.product;

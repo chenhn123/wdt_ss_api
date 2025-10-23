@@ -114,3 +114,35 @@ int wdt_ss_get_device_info(unsigned int *vid, unsigned int *pid, unsigned int* h
 }
 
 
+
+
+int wdt_ss_get_boot_mode(unsigned int *mode)
+{
+	int ret = get_boot_mode_internal(mode);
+	if(ret == 1)
+		return 0;
+	else if (ret == 0)
+		return 1;
+	else
+		return ret;
+	
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

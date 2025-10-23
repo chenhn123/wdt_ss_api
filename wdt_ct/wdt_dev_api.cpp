@@ -122,10 +122,8 @@ int wh_get_device_basic_access_func(WDT_DEV* pdev,  FUNC_PTR_STRUCT_DEV_BASIC*  
 
 	if (pdev->board_info.dev_type & FW_WDT8790) {
 		pFuncs->p_wh_get_feature = (LPFUNC_wh_get_feature) wh_w8790_dev_get_feature;
-                pFuncs->p_wh_set_feature = (LPFUNC_wh_set_feature) wh_w8790_dev_set_feature;
-
+		pFuncs->p_wh_set_feature = (LPFUNC_wh_set_feature) wh_w8790_dev_set_feature;
 		return 1;
-
         }
 
 
@@ -304,6 +302,7 @@ int init_n_scan_device(WDT_DEV *pdev, EXEC_PARAM *pparam, unsigned int flag)
 		return 0;
 
 	pdev->intf_index = pparam->interface_num;
+	pdev->board_info.is_ss_boot_mode = 0;
 
 	if (!pdev->func_wh_get_device_access_func(pdev->intf_index, &pdev->funcs_device)) {
 		wh_printf("Get device funcs error");
@@ -351,8 +350,6 @@ int init_n_scan_device(WDT_DEV *pdev, EXEC_PARAM *pparam, unsigned int flag)
     	}
 	if (pdev->funcs_device.p_wh_open_device(pdev)) {
 		if (pdev->funcs_device.p_wh_prepare_data(pdev, &pdev->board_info)) {		
-			if (pdev->is_legacy)
-				return 1;
 			
 			if (!pdev->func_wh_get_device_private_access_func(pdev, &pdev->funcs_device_private)) {
 				wh_printf("Get device private funcs error");
@@ -532,10 +529,6 @@ int image_file_burn_data_verify(WDT_DEV *pdev, EXEC_PARAM *pparam)
 		return update_fw_by_wif2(pdev, (char*)pparam->image_file);
 	}
 
-        if (pdev->is_legacy) {
-                printf("Not support legacy FW update !\n");
-                goto exit_burn;
-        }
 
 	if (!load_wif(pdev, (char*)pparam->image_file)){
 		printf("Load WIF failed !\n");
@@ -593,24 +586,17 @@ int image_file_burn_data_verify(WDT_DEV *pdev, EXEC_PARAM *pparam)
 	if (is_cfg_update && chunk_info_cfg.chuckInfo.targetStartAddr) {
 		UINT32 tempStartAddr = chunk_info_cfg.chuckInfo.targetStartAddr;
 
-		/*
-		 *
-		 * it will program a backup parameters to param_clone_address in general
-		 * just specify OPTION_NO_RPARAM if don't want this backup
-		 */
-		if (!(pdev->pparam->argus & OPTION_NO_RPARAM)) {
-			if (pdev->board_info.dev_type & FW_WDT8755) {
-				if (pinfo->dev_info.w8755_dev_info.boot_partition == W8755_BP_SECONDARY) {
-					chunk_info_cfg.chuckInfo.targetStartAddr = pdev->board_info.sec_header.w8755_sec_header.secondary_param_clone_addr;
-					err = program_one_chunk(pdev, "r_config", CHUNK_ID_CNFD, OPTION_4K_VERIFY, &chunk_info_cfg);
-				}else{
-					chunk_info_cfg.chuckInfo.targetStartAddr = pdev->board_info.sec_header.w8755_sec_header.param_clone_addr;
-					err = program_one_chunk(pdev, "r_config", CHUNK_ID_CNFG, OPTION_4K_VERIFY, &chunk_info_cfg);
-				}
-
-				if (!err)
-					goto exit_burn;
+		if (pdev->board_info.dev_type & FW_WDT8755) {
+			if (pinfo->dev_info.w8755_dev_info.boot_partition == W8755_BP_SECONDARY) {
+				chunk_info_cfg.chuckInfo.targetStartAddr = pdev->board_info.sec_header.w8755_sec_header.secondary_param_clone_addr;
+				err = program_one_chunk(pdev, "r_config", CHUNK_ID_CNFD, OPTION_4K_VERIFY, &chunk_info_cfg);
+			}else{
+				chunk_info_cfg.chuckInfo.targetStartAddr = pdev->board_info.sec_header.w8755_sec_header.param_clone_addr;
+				err = program_one_chunk(pdev, "r_config", CHUNK_ID_CNFG, OPTION_4K_VERIFY, &chunk_info_cfg);
 			}
+
+			if (!err)
+				goto exit_burn;
 		}
 
 		chunk_info_cfg.chuckInfo.targetStartAddr = tempStartAddr;
