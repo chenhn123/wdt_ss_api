@@ -184,8 +184,7 @@ int main(int argc, char * argv[])
 		return 0;
 	}
 
-	if (!exec_param.argus )
-		print_version();
+	print_version();
 
 	if (!check_privilege()) {
 		printf("Must be a root to run this program!\n");
