@@ -180,7 +180,6 @@ int main(int argc, char * argv[])
 
 	memset((void*) &exec_param, 0, sizeof(EXEC_PARAM));
 	if(!parse_args(argc, argv, &exec_param)) {
-		printf("parse arg fail!\n");
 		return 0;
 	}
 
@@ -216,15 +215,14 @@ int main(int argc, char * argv[])
 		printf("It takes %ums\n", (unsigned int) (get_current_ms() - start_tick));
 	}
 
-		/*
-		*
-		*
-			The Spec from 4POS
-			Success -> 0
-			Touch Controller is correct, but FW Updated failed -> 1
-			Touch Panel match fails(this means that it is the old touch controller OR a completely other touch controller for example from eGalaxy) -> 2
-			Unkown -> Others
-		 */
+	/*
+	*
+		The Spec from 4POS
+		Success -> 0
+		Touch Controller is correct, but FW Updated failed -> 1
+		Touch Panel match fails(this means that it is the old touch controller OR a completely other touch controller for example from eGalaxy) -> 2
+		Unkown -> Others
+	*/
 
 	wh_printf("ret: %d\n", ret);
 
