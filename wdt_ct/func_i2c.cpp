@@ -393,6 +393,11 @@ int wh_i2c_prepare_data(WDT_DEV *pdev, BOARD_INFO* pboard_info)
 
 	board_info.dev_type = check_firmware_id(pdev, board_info.firmware_id);
 
+	if(board_info.dev_type == FW_NOT_SUPPORT)
+		return 0;
+
+	
+
 	if (board_info.dev_type & FW_WDT8790) {
 		wh_w8790_parse_device_info(&board_info.dev_info.w8790_feature_devinfo, buf);
 
@@ -425,8 +430,6 @@ int wh_i2c_prepare_data(WDT_DEV *pdev, BOARD_INFO* pboard_info)
 	else {
 		if (buf[0] != 0xf4)
 			wh_printf("wrong id[0xf4] of fw response: 0x%x\n", buf[0]);
-		else
-			board_info.i2c_dummy = buf[1];
 	}
 
 	if (buf[0] == 0xf4 && (get_unaligned_le16(buf + 2) == 0x154f)) { 

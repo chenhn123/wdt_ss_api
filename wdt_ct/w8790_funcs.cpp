@@ -1196,6 +1196,28 @@ int wh_w8790_prepare_data(WDT_DEV* pdev, BOARD_INFO* p_out_board_info)
 		p_out_board_info->is_ss_boot_mode = 1;
 
 	}
+	W8790_PCT pct_data;
+
+	if (wh_w8790_dev_get_context(pdev, &pct_data)) {
+		// set the default values
+		p_out_board_info->sys_param.Phy_Frmbuf_W = pct_data.n_cs;
+		p_out_board_info->sys_param.Phy_X0 = pct_data.x1;
+		p_out_board_info->sys_param.Phy_X1 = pct_data.xn;
+
+		p_out_board_info->sys_param.Phy_Frmbuf_H = pct_data.n_cd;
+		p_out_board_info->sys_param.Phy_Y0 = pct_data.y1;
+		p_out_board_info->sys_param.Phy_Y1 = pct_data.yn;
+
+		p_out_board_info->sys_param.xmls_id2 = 0;
+
+		W8790_PARAMETER_INFO parameter_info;
+		wh_w8790_dev_read_parameter_table_info(pdev, &parameter_info);
+		UINT32 cksum;
+		wh_w8790_dev_read_parameters_get_checksum(pdev, parameter_info, &cksum);
+		p_out_board_info->sys_param.xmls_id1 = cksum;
+
+		return 1;
+	}
 
 
 

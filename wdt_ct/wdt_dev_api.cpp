@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2025 Randy Lai
  * Copyright (C) 2017 Chen Hung-Nien
  * Copyright (C) 2017 Weida Hi-Tech
  *
@@ -69,7 +70,7 @@ int wh_get_device_private_access_func(WDT_DEV* pdev,  FUNC_PTR_STRUCT_DEV_OPERAT
 
 	if (pdev->board_info.dev_type & FW_WDT8755) {
 		pFuncs->p_wh_program_chunk = (LPFUNC_wh_program_chunk) wh_w8755_dev_program_chunk;
-		pFuncs->p_wh_verify_chunk	= (LPFUNC_wh_verify_chunk) wh_w8755_dev_verify_chunk;
+		pFuncs->p_wh_verify_chunk = (LPFUNC_wh_verify_chunk) wh_w8755_dev_verify_chunk;
 		pFuncs->p_wh_flash_write_data = (LPFUNC_wh_flash_write_data) wh_w8755_dev_flash_write_data;
 		pFuncs->p_wh_flash_get_checksum = (LPFUNC_wh_flash_get_checksum) wh_w8755_dev_flash_get_checksum;
  		pFuncs->p_wh_send_commands = (LPFUNC_wh_send_commands) wh_w8755_dev_send_commands;
@@ -79,7 +80,7 @@ int wh_get_device_private_access_func(WDT_DEV* pdev,  FUNC_PTR_STRUCT_DEV_OPERAT
 
 	if (pdev->board_info.dev_type & FW_WDT8760_2) {
 		pFuncs->p_wh_program_chunk = (LPFUNC_wh_program_chunk) wh_w8760_dev_program_chunk;
-		pFuncs->p_wh_verify_chunk	= (LPFUNC_wh_verify_chunk) wh_w8760_dev_verify_chunk;
+		pFuncs->p_wh_verify_chunk = (LPFUNC_wh_verify_chunk) wh_w8760_dev_verify_chunk;
 		pFuncs->p_wh_flash_write_data = (LPFUNC_wh_flash_write_data) wh_w8760_dev_flash_write_data;
 		pFuncs->p_wh_flash_get_checksum = (LPFUNC_wh_flash_get_checksum) wh_w8760_dev_flash_get_checksum;
  		pFuncs->p_wh_send_commands = (LPFUNC_wh_send_commands) wh_w8760_dev_send_commands;
@@ -137,25 +138,25 @@ int check_firmware_id(WDT_DEV *pdev, UINT32 fwid)
 {
 	if ((fwid & 0xF0000000) == 0x30000000) {
 		if (pdev->pparam->argus & OPTION_INFO)		
-			wh_printf("It is WDT8755 or WDT8752 !\n");	
+			wh_printf("It is CI3.0 or SR2.0 !\n");	
 		return FW_WDT8755;
 	}
 
 	if ((fwid & 0xFFFF0000) == 0xFFFF0000) {
 		if (pdev->pparam->argus & OPTION_INFO)		
-			wh_printf("It is WDT8752 recovery fw !\n");	
+			wh_printf("It is CI3.0 or SR2.0 recovery fw !\n");	
 		return FW_WDT8755;
 	}	
 
 	if ((fwid & 0xF0000000) == 0x40000000) {
 		if (pdev->pparam->argus & OPTION_INFO)	
-			wh_printf("It is WDT8760 alike !\n");	
+			wh_printf("It is CI4.0 or TM4.0 !\n");	
 		return FW_WDT8760;
 	}
 
 	if ((fwid & 0xFF000000) == 0x51000000) {
                 if(pdev->pparam->argus & OPTION_INFO)
-                        wh_printf("It is WDT8730 !\n");
+                        wh_printf("It is SR3.0 !\n");
                 return FW_NOT_SUPPORT;
 
         }
@@ -164,12 +165,18 @@ int check_firmware_id(WDT_DEV *pdev, UINT32 fwid)
 
 	if ((fwid & 0xFF000000) == 0x50000000) {
 		if(pdev->pparam->argus & OPTION_INFO)
-			wh_printf("It is WDT8790 !\n");
+			wh_printf("It is CI5.0 !\n");
 		return FW_WDT8790;
 
 	}
+	if ((fwid & 0xFFFFF000) == 0x13308000) {
+		if(pdev->pparam->argus & OPTION_INFO)
+			wh_printf("It is TM1.8, TM1.75 or TM1.7 (Not suppport) !\n");
+		return FW_NOT_SUPPORT;
+	}
+	return FW_NOT_SUPPORT;
 	
-	return FW_WITH_CMD;
+
 }
 
 UINT16 get_unaligned_le16(const void *p)
@@ -276,7 +283,7 @@ int load_wif(WDT_DEV *pdev, char *path)
 	pdev->wif_access.wif_handle = pdev->func_wh_open_whiff(pdev->wif_access.wif_path);
 
 	if (!pdev->wif_access.wif_handle) {
-		wh_printf("Parse input file error");
+		wh_printf("Parse input file error\n");
 		return 0;
 	}
 
@@ -288,7 +295,7 @@ int load_wif(WDT_DEV *pdev, char *path)
 int close_wif(WDT_DEV *pdev)
 {
 	if (!pdev->func_wh_close_whiff(pdev->wif_access.wif_handle)) {
-		wh_printf("Close input file error");
+		wh_printf("Close input file error\n");
 		return 0;
 	}
 	return 1;
@@ -305,7 +312,7 @@ int init_n_scan_device(WDT_DEV *pdev, EXEC_PARAM *pparam, unsigned int flag)
 	pdev->board_info.is_ss_boot_mode = 0;
 
 	if (!pdev->func_wh_get_device_access_func(pdev->intf_index, &pdev->funcs_device)) {
-		wh_printf("Get device funcs error");
+		wh_printf("Get device funcs error \n");
 		return 0;		
 	}
 
@@ -316,7 +323,7 @@ int init_n_scan_device(WDT_DEV *pdev, EXEC_PARAM *pparam, unsigned int flag)
 		int num = pdev->funcs_device.p_wh_scan_device(pdev);
 		
 		if (num == 0) {
-			wh_printf("Open device error");
+			wh_printf("error: device not found \n");
 			return 0;
 		}
 
@@ -436,6 +443,7 @@ int image_file_check(WDT_DEV *pdev, EXEC_PARAM *pparam)
 		printf("fw1 main fw checking ....\n");
 
 		if (!pdev->funcs_device_private.p_wh_verify_chunk(pdev, &chunkInfoEx)) {
+			printf("verification fw1 : fail !\n");
 			err = 0;
 		}
 		else
@@ -448,6 +456,7 @@ int image_file_check(WDT_DEV *pdev, EXEC_PARAM *pparam)
 		printf("config data checking ....\n");
 
 		if (!pdev->funcs_device_private.p_wh_verify_chunk(pdev, &chunkInfoEx)) {
+			printf("verification config : fail !\n");
 			err = 0;
 		}
 		else
@@ -459,6 +468,7 @@ int image_file_check(WDT_DEV *pdev, EXEC_PARAM *pparam)
 		printf("config1 data checking ....\n");
 
 		if (!pdev->funcs_device_private.p_wh_verify_chunk(pdev, &chunkInfoEx)) {
+			printf("verification config1 : fail !\n");
 			err = 0;
 		}
 		else
@@ -471,6 +481,7 @@ int image_file_check(WDT_DEV *pdev, EXEC_PARAM *pparam)
 
 		if (!pdev->funcs_device_private.p_wh_verify_chunk(pdev, &chunkInfoEx)) {
 			err = 0;
+			printf("verification dual firmware secondary main : fail !\n");
 			goto exit_func;
 		}
 		else
@@ -482,6 +493,7 @@ int image_file_check(WDT_DEV *pdev, EXEC_PARAM *pparam)
 		printf("dual firmware secondary config data checking ....\n");
 
 		if (!pdev->funcs_device_private.p_wh_verify_chunk(pdev, &chunkInfoEx)) {
+			printf("verification dual firmware secondary config : fail !\n");
 			err = 0;
 		}
 		else
@@ -495,7 +507,11 @@ exit_func:
 
 
 	if (!close_wif(pdev))
+	{
+		printf("Close fw file fail !\n");
 		return 0;
+
+	}
 
 	printf("Operation done!\n");
 
@@ -522,7 +538,7 @@ int image_file_burn_data_verify(WDT_DEV *pdev, EXEC_PARAM *pparam)
 
         if (!init_n_scan_device(pdev, pparam, 0)) {
 		printf("Wdt controller not found !\n");
-                goto exit_burn;
+                return -2;
         }
 
 	if (pdev->board_info.dev_type & FW_WDT8790) {
@@ -644,11 +660,14 @@ int image_file_burn_data_verify(WDT_DEV *pdev, EXEC_PARAM *pparam)
 		wh_sleep(2000);
 	}
 
-exit_burn:	
-	close_device(pdev);	
 
-	if (!close_wif(pdev))
-		return 0;
+
+
+exit_burn:
+
+
+	close_device(pdev);	
+	close_wif(pdev);
 	
 	return err;
 }
@@ -672,10 +691,12 @@ int show_info(WDT_DEV *pdev, EXEC_PARAM *pparam)
 
 
 	if (ret) {
-		wh_printf("Vendor_ID: 0x%04x\n", pinfo->vid);
-		wh_printf("Product_ID: 0x%04x\n", pinfo->pid);
-		wh_printf("Hardware_ID: 0x%x\n", pinfo->hardware_id);		
-		wh_printf("Serial_No: 0x%x\n", pinfo->serial_no);
+		printf("Vendor_ID: 0x%04x\n", pinfo->vid);
+		printf("Product_ID: 0x%04x\n", pinfo->pid);
+		printf("Firmware_ID: 0x%x\n", pinfo->firmware_id);
+		printf("Hardware_ID: 0x%x\n", pinfo->hardware_id);		
+		printf("Serial_No: 0x%x\n", pinfo->serial_no);
+
 	} 
 info_exit:	
 	close_device(pdev);
@@ -992,6 +1013,7 @@ WH_HANDLE wh_open_whiff_file(char* path)
 	}
 
 failed:
+	printf("open wif file fail \n");
 	wh_close_whiff_file((WH_HANDLE) pcur_wif);
 		
 	return NULL;

@@ -524,6 +524,7 @@ int update_fw_by_wif2(WDT_DEV *pdev, char *path)
 	int ret;
 	ret = get_wif2(path, &wif2);
 	if (ret == 0) {
+		printf("Fail: Incorrect or mismatched firmware format\n");
 		goto finish;
 	}
 	ret = do_update_fw_by_wif2_flow(pdev, &wif2);
@@ -541,6 +542,7 @@ int check_fw_by_wif2(WDT_DEV *pdev, char *path)
 	int ret;
 	ret = get_wif2(path, &wif2);
 	if (ret == 0) {
+		printf("Fail: Incorrect or mismatched firmware format\n");
 		goto finish;
 	}
 	ret = do_check_fw_by_wif2_flow(pdev, &wif2);

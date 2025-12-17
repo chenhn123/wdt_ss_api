@@ -44,8 +44,9 @@
 
 #define		MAX_DEV			16
 #define 	VID_WEIDA 		0x2575
-#define 	VID_SS			0x04e8
-
+#define		VID_ADVANCED_SILICON	0x2619
+#define		VID_TPK			0x2149
+#define 	VID_SS			0x04E8
 
 static char		g_dev_path[24] = "/dev/hidraw";
 static int		g_dev_count = 0;
@@ -124,7 +125,7 @@ int  wh_hidraw_scan_device(WDT_DEV* pdev)
 		if (handle < 0) {
 			continue;
 		} else if (get_device_info(handle, &hidraw_info) > 0) {
-			if (hidraw_info.vendor == VID_WEIDA || hidraw_info.vendor == VID_SS){
+			if (hidraw_info.vendor == VID_WEIDA || hidraw_info.vendor == VID_TPK){
 				int res = ioctl(handle, HIDIOCGRAWPHYS(256), buf);
 				if (res < 0){
 					 perror("HIDIOCGRAWPHYS");
@@ -214,43 +215,13 @@ int wh_hidraw_close_device(WDT_DEV* pdev)
 	return 0;
 }
 
-int wh_w8755_hidraw_prepare_data(WDT_DEV* pdev, BOARD_INFO* p_out_board_info, int maybe_isp)
-{
-	maybe_isp = 0;
-	/*
-	// initialize the basic function for handling the following operations
-	wh_w8755_dev_set_basic_op(pdev);	
-	if (!wh_w8755_dev_identify_platform(pdev)) {
-		printf("Inconsistant data!\n");
-		return 0;
-	}
-
-	if (!wh_w8755_dev_parse_new_dev_info(pdev, &p_out_board_info->dev_info.w8755_dev_info)) {
-		printf("Can't get new device info!\n");
-		return 0;
-	}
-
-
-	memcpy(&pdev->board_info.dev_info.w8755_dev_info, &p_out_board_info->dev_info.w8755_dev_info, sizeof(W8755_DEV_INFO_NEW));
-
-	if (!wh_w8755_dev_read_flash_map(pdev, p_out_board_info)) {
-		printf("Can't get address table!\n");
-		return 0;		
-	}
-
-
-	wh_w8755_dev_set_device_mode(pdev, W8755_DM_SENSING);
-
-*/
-	return 1;
-}
 
 int wh_hidraw_prepare_data(WDT_DEV *pdev, BOARD_INFO* p_out_board_info)
 {
 	BYTE	buf[70];
 	hidraw_device	*phid;
-	BOARD_INFO		board_info;
-	struct hidraw_devinfo 	hidraw_info;
+	BOARD_INFO board_info;
+	struct hidraw_devinfo hidraw_info;
 	int 	ret = 0;
 	int 	id;
 
@@ -297,6 +268,9 @@ int wh_hidraw_prepare_data(WDT_DEV *pdev, BOARD_INFO* p_out_board_info)
 		board_info.serial_no = get_unaligned_le32(buf + 9);
 		board_info.dev_type = check_firmware_id(pdev, board_info.firmware_id);
 	}
+	if(board_info.dev_type == FW_NOT_SUPPORT)
+		goto exit_prepare_data;
+
 	
 
 	if (board_info.dev_type & (FW_WDT8760)) {
@@ -329,18 +303,18 @@ int wh_hidraw_prepare_data(WDT_DEV *pdev, BOARD_INFO* p_out_board_info)
 		buf[0] = 0xf4;		
 		if (!wh_hidraw_get_feature(pdev, buf, 56)) 
 			printf("failed to get i2c cfg\n");
-		else 
+		else{
+
 			if (buf[0] != 0xf4)
 				printf("wrong id[0xf4] of fw response: 0x%x\n", buf[0]);
-			else
-				board_info.i2c_dummy = buf[1];
+		}
 
 		if (buf[0] == 0xf4 && (get_unaligned_le16(buf + 2) == 0x154f)) { 	
 			board_info.dev_type |= FW_WDT8755;
 
 			memcpy(&board_info.sys_param, &buf[10], get_unaligned_le16(buf + 12));
 
-			if (wh_w8755_hidraw_prepare_data(pdev, &board_info, 0)) 
+			if (wh_w8755_prepare_data(pdev, &board_info, 0)) 
 				ret = 1;
 		} else
 			printf("error in parse 0xf4 packet\n");
