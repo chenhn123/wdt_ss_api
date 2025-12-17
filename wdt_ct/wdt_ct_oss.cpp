@@ -32,7 +32,7 @@
 #define		TOOL_VERSION_STR		"1.0.5"
 
 
-#define WDT_UTIL_GETOPTS	"hdv:fbrsw:vci:j:"
+#define WDT_UTIL_GETOPTS	"hdv:si:j:"
 
 static struct option long_options[] = {
 	{"help", 0, NULL, 'h'},
@@ -54,13 +54,14 @@ void print_version()
 void print_help(const char *prog_name)
 {
 	print_version();
-	
-	printf("\nUsage: %s [OPTIONS] [FW_FILE|SUB-ARGU]\n", prog_name);
-	printf("\t-h, --help\tPrint this message\n");
-	printf("\t-d, --debug\n");	
-	printf("\t-v, --update\tUpdate firmware with verification\n");
-	printf("\t-s, --info\tPrint the info associated with the devcie\n");
-	printf("\t-j, --verify device checksum with fw\n");
+
+	printf("\nUsage: %s [OPTIONS] [FW_FILE|SUB-ARG]\n", prog_name);
+	printf("Options:\n");
+	printf("  -h, --help      Print this help message\n");
+	printf("  -d, --debug     Enable debug mode\n");
+	printf("  -v, --update    Update firmware with verification\n");
+	printf("  -s, --info      Print device information\n");
+	printf("  -j, --verify    Verify device checksum with firmware\n");
 }
 
 void wh_printf(const char *fmt, ...)

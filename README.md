@@ -1,4 +1,4 @@
-# wdt_ss_api
+# wdt_ct_oss, wdt_ss_api
 A Linux tool to operate weida's controller to get info or upgrade firmware.<br />
 
   make: to build the test libray ant test app.<br />
