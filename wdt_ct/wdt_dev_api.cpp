@@ -447,7 +447,7 @@ int image_file_check(WDT_DEV *pdev, EXEC_PARAM *pparam)
 			err = 0;
 		}
 		else
-			printf("verfication : pass !\n");
+			printf("verification : pass !\n");
 	}
 
 
@@ -460,7 +460,7 @@ int image_file_check(WDT_DEV *pdev, EXEC_PARAM *pparam)
 			err = 0;
 		}
 		else
-			printf("verfication : pass !\n");
+			printf("verification : pass !\n");
 	}
 
 	memset(&chunkInfoEx, 0, sizeof(CHUNK_INFO_EX));
@@ -472,7 +472,7 @@ int image_file_check(WDT_DEV *pdev, EXEC_PARAM *pparam)
 			err = 0;
 		}
 		else
-			printf("verfication : pass !\n");
+			printf("verification : pass !\n");
 	}
 
 	memset(&chunkInfoEx, 0, sizeof(CHUNK_INFO_EX));
@@ -485,7 +485,7 @@ int image_file_check(WDT_DEV *pdev, EXEC_PARAM *pparam)
 			goto exit_func;
 		}
 		else
-			printf("verfication : pass !\n");
+			printf("verification : pass !\n");
 	}
 
 	memset(&chunkInfoEx, 0, sizeof(CHUNK_INFO_EX));
@@ -497,7 +497,7 @@ int image_file_check(WDT_DEV *pdev, EXEC_PARAM *pparam)
 			err = 0;
 		}
 		else
-			printf("verfication : pass !\n");
+			printf("verification : pass !\n");
 	}
 
 
