@@ -170,8 +170,8 @@ int check_firmware_id(WDT_DEV *pdev, UINT32 fwid)
 
 	}
 	if ((fwid & 0xFFFFF000) == 0x13308000) {
-		if(pdev->pparam->argus & OPTION_INFO)
-			wh_printf("It is TM1.8, TM1.75 or TM1.7 (Not suppport) !\n");
+		if(pdev->pparam->argus)
+			printf("It is TM1.8, TM1.75 or TM1.7 (Not suppport) !\n");
 		return FW_NOT_SUPPORT;
 	}
 	return FW_NOT_SUPPORT;
@@ -367,12 +367,12 @@ int init_n_scan_device(WDT_DEV *pdev, EXEC_PARAM *pparam, unsigned int flag)
 		if (pdev->funcs_device.p_wh_prepare_data(pdev, &pdev->board_info)) {		
 			
 			if (!pdev->func_wh_get_device_private_access_func(pdev, &pdev->funcs_device_private)) {
-				wh_printf("Get device private funcs error");
+				wh_printf("Get device private funcs error\n");
 				return 0;		
 			}
 			return 1;
 		}else
-			wh_printf("Get system info error");
+			wh_printf("Get system info error\n");
 	}
 	return 0;
 }
