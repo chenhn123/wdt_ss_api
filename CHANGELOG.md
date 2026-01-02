@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.6] - 2026-01-02
+
+### Added
+- Add message for muti-devices
+### Fixed
+- Fixed typo
+
+
 ## [1.0.5] - 2025-12-17
 ### Added
 - Add wdt_ct_oss to the project.

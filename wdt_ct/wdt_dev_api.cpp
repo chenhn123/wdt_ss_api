@@ -323,8 +323,16 @@ int init_n_scan_device(WDT_DEV *pdev, EXEC_PARAM *pparam, unsigned int flag)
 		int num = pdev->funcs_device.p_wh_scan_device(pdev);
 		
 		if (num == 0) {
-			wh_printf("error: device not found \n");
+			printf("error: device not found \n");
 			return 0;
+		}
+		if (num > 1) {
+			printf("\n");
+                        printf("Multiple devices found.\n");
+                        printf("This tool currently supports only one device.\n");
+                        printf("If you need support for multiple devices, please submit feedback on the GitHub community or email Weida.\n");
+			return 0;
+
 		}
 
 		/* just use index 0 to get the device info */

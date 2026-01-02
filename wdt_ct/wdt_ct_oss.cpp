@@ -29,7 +29,7 @@
 #include "wdt_ct.h"
 
 #define		TOOL_TITLE_STR			"wdt_ct_oss"
-#define		TOOL_VERSION_STR		"1.0.5"
+#define		TOOL_VERSION_STR		"1.0.6"
 
 
 #define WDT_UTIL_GETOPTS	"hdv:si:j:"
@@ -37,7 +37,7 @@
 static struct option long_options[] = {
 	{"help", 0, NULL, 'h'},
 	{"debug",0, NULL, 'd'},		
-	{"update", 1, NULL, 'u'},
+	{"update", 1, NULL, 'v'},
 	{"info", 0, NULL, 's'},	
 	{"cksum", 0, NULL, 'j'},
 	{"intf", 1, NULL, 'i'},	
