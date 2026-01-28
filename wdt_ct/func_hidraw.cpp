@@ -153,8 +153,10 @@ int  wh_hidraw_scan_device(WDT_DEV* pdev)
 
 				strcpy(g_dev_info[g_cur_dev_index].path, g_dev_path);
 
+				printf("Found weida's hid device: vendor: %04x, product: %04x, bustype: 0x%x\n",
+                                           (UINT16) hidraw_info.vendor, (UINT16) hidraw_info.product, hidraw_info.bustype);
                                    				    
-			        wh_printf("path%d=%s\n", g_cur_dev_index, g_dev_path);
+			        printf("path%d=%s\n", g_cur_dev_index, g_dev_path);
 				g_dev_count ++;
 
 			}

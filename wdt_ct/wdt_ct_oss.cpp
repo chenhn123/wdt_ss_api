@@ -29,7 +29,7 @@
 #include "wdt_ct.h"
 
 #define		TOOL_TITLE_STR			"wdt_ct_oss"
-#define		TOOL_VERSION_STR		"1.0.6"
+#define		TOOL_VERSION_STR		"1.0.7"
 
 
 #define WDT_UTIL_GETOPTS	"hdv:si:j:"

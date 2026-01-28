@@ -138,7 +138,7 @@ int check_firmware_id(WDT_DEV *pdev, UINT32 fwid)
 {
 	if ((fwid & 0xF0000000) == 0x30000000) {
 		if (pdev->pparam->argus & OPTION_INFO)		
-			wh_printf("It is CI3.0 or SR2.0 !\n");	
+			printf("It is CI3.0 or SR2.0 !\n");	
 		return FW_WDT8755;
 	}
 
@@ -150,13 +150,13 @@ int check_firmware_id(WDT_DEV *pdev, UINT32 fwid)
 
 	if ((fwid & 0xF0000000) == 0x40000000) {
 		if (pdev->pparam->argus & OPTION_INFO)	
-			wh_printf("It is CI4.0 or TM4.0 !\n");	
+			printf("It is CI4.0 or TM4.0 !\n");	
 		return FW_WDT8760;
 	}
 
 	if ((fwid & 0xFF000000) == 0x51000000) {
                 if(pdev->pparam->argus & OPTION_INFO)
-                        wh_printf("It is SR3.0 !\n");
+                        printf("It is SR3.0 !\n");
                 return FW_NOT_SUPPORT;
 
         }
@@ -165,7 +165,7 @@ int check_firmware_id(WDT_DEV *pdev, UINT32 fwid)
 
 	if ((fwid & 0xFF000000) == 0x50000000) {
 		if(pdev->pparam->argus & OPTION_INFO)
-			wh_printf("It is CI5.0 !\n");
+			printf("It is CI5.0 !\n");
 		return FW_WDT8790;
 
 	}
@@ -685,6 +685,7 @@ int show_info(WDT_DEV *pdev, EXEC_PARAM *pparam)
 {
 	BOARD_INFO *pinfo = &pdev->board_info;	
 	int ret = 0;
+	char str[32];
 
 	if (!pdev || !pparam)
 		return 0;
@@ -699,11 +700,20 @@ int show_info(WDT_DEV *pdev, EXEC_PARAM *pparam)
 
 
 	if (ret) {
+		memset(str, '\0', sizeof(str));
+                memcpy(str, pinfo->dev_info.w8760_feature_devinfo.platform_id, 8);
+                printf("It is %s\n", str);
+
 		printf("Vendor_ID: 0x%04x\n", pinfo->vid);
 		printf("Product_ID: 0x%04x\n", pinfo->pid);
-		printf("Firmware_ID: 0x%x\n", pinfo->firmware_id);
-		printf("Hardware_ID: 0x%x\n", pinfo->hardware_id);		
-		printf("Serial_No: 0x%x\n", pinfo->serial_no);
+		printf("Firmware_ID: 0x%X\n", pinfo->firmware_id);
+		printf("Hardware_ID: 0x%X\n", pinfo->hardware_id);		
+		printf("Serial_No: 0x%X\n", pinfo->serial_no);
+		printf("Platform_ID: 0x%x\n", 0x0);
+		printf("XmlId1: %X   XmlId2: %X\n", pinfo->sys_param.xmls_id1, pinfo->sys_param.xmls_id2);
+		printf("Param: phy_x %d, phy_y %d\n", pinfo->sys_param.Phy_Frmbuf_W, pinfo->sys_param.Phy_Frmbuf_H);
+		printf("Tracking_id: ");
+
 
 	} 
 info_exit:	

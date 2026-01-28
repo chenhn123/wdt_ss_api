@@ -672,7 +672,8 @@ int wh_w8760_dev_get_context(WDT_DEV* pdev, W8760_PCT_DATA* pPct)
 	return 1;
 }
 
-int wh_w8760_dev_get_parameter_table_state(WDT_DEV* pdev) {
+int wh_w8760_dev_get_parameter_table_state(WDT_DEV* pdev) 
+{
         BYTE buf[4] = {0};
 
         if (wh_w8760_dev_get_device_status(pdev, buf, 0, 4) <= 0)
@@ -682,12 +683,118 @@ int wh_w8760_dev_get_parameter_table_state(WDT_DEV* pdev) {
         return type;
 }
 
+int wh_w8760_section_header_valid(W8760_FLASH_SECTION_HEADER *psec_header)
+{
+        if (!psec_header)
+                return 0;
+
+        UINT16 sum = 0;
+        sum = misr_for_bytes(sum, (BYTE*) &psec_header->PayloadSize, 0, 12);
+
+        return (sum == psec_header->HeaderChecksum);
+}
+
+
+
+
+int wh_w8760_dev_read_array(WDT_DEV *pdev, int cmd_id, BYTE* buffer, int start, int item_size, int item_count)
+{
+        int max_read_batch = W8760_USB_MAX_PAYLOAD_SIZE / item_size;
+        int i = start;
+
+        while (item_count >= max_read_batch) {
+                if (wh_w8760_dev_read_items(pdev, cmd_id, buffer, i, item_size, max_read_batch) <= 0)
+                        return 0;
+                i += max_read_batch * item_size;
+                item_count -= max_read_batch;
+        }
+        if (item_count > 0)
+                return wh_w8760_dev_read_items(pdev, cmd_id, buffer, i, item_size, item_count);
+        return 1;
+}
+
+
+int wh_w8760_dev_read_flash(WDT_DEV* pdev, BYTE* buf, int size)
+{
+        return wh_w8760_dev_read_array(pdev, W8760_READ_FLASH, buf, 0, sizeof(BYTE), size);
+}
+
+
+int wh_w8760_dev_get_section_addr_map(WDT_DEV* pdev, W8760_SECTION_MAP_ADDR* psec_map)
+{
+        UINT32 firmware_map_table_addr = 0x000010;
+        W8760_FLASH_SECTION_HEADER      sec_header = { 0, 0, 0, 0, 0 };
+
+        if (!psec_map)
+                return 0;
+
+        if (wh_w8760_dev_set_flash_address(pdev, firmware_map_table_addr) <= 0)
+                return 0;
+
+        if (wh_w8760_dev_read_flash(pdev, (BYTE*) &sec_header, sizeof(W8760_FLASH_SECTION_HEADER)) <= 0)
+                return 0;
+
+        if (wh_w8760_section_header_valid(&sec_header) && sec_header.PayloadSize >= 32 && sec_header.PayloadSize < 1024) {
+                if (wh_w8760_dev_set_flash_address(pdev, firmware_map_table_addr + sizeof(W8760_FLASH_SECTION_HEADER)) <= 0)
+                        return 0;
+
+                BYTE* pdata = (BYTE*) malloc((size_t)sec_header.PayloadSize + 16);
+                if (!pdata) {
+                        printf("pdata malloc fail \n");
+                        return 0;
+                }
+                int ret = wh_w8760_dev_read_flash(pdev, (BYTE*) pdata, sec_header.PayloadSize);
+
+
+                if (ret > 0) {
+                        psec_map->ParameterMap = get_unaligned_le32(&pdata[0]);
+                        psec_map->MainLoader = get_unaligned_le32(&pdata[4]);
+                        psec_map->Parameter = get_unaligned_le32(&pdata[8]);
+                        // deprecated
+                        psec_map->Descriptors = 0;
+                        // deprecated
+                        psec_map->PowerOnReference = 0;
+
+                        psec_map->ParameterBackup = psec_map->Parameter + 0x1000;
+                        psec_map->DescriptorsBackup = 0;
+                        psec_map->TemporaryParameter = psec_map->Parameter + 0x2000;
+                }
+                free(pdata);
+                return ret;
+        }
+        return 0;
+}
+
+int wh_w8760_dev_get_parameter_chksum_by_sec_header(WDT_DEV* pdev, UINT32 param_addr, UINT16* chksum)
+{
+        UINT32 checksum = 0;
+        W8760_FLASH_SECTION_HEADER      sec_header = { 0, 0, 0, 0, 0 };
+        if (!param_addr)
+                return 0;
+
+        if (wh_w8760_dev_set_flash_address(pdev, param_addr) <= 0)
+                return 0;
+
+        if (wh_w8760_dev_read_flash(pdev, (BYTE*) &sec_header, sizeof(W8760_FLASH_SECTION_HEADER)) <= 0)
+                return 0;
+
+        if (wh_w8760_dev_flash_get_checksum(pdev, &checksum, param_addr, sec_header.PayloadSize + sizeof(W8760_FLASH_SECTION_HEADER)) <= 0)
+                return 0;
+
+        *chksum = checksum;
+        return 1;
+}
+
+
+
+
 
 int wh_w8760_prepare_data(WDT_DEV* pdev, BOARD_INFO* p_out_board_info)
 {
 	if (!pdev || !p_out_board_info)
 		return 0;
-
+	UINT16  chksum = 0;
+	W8760_PCT_DATA	pct_data;
 
 	/* initialize the basic function for handling the following operations */
 	wh_w8760_dev_set_basic_op(pdev);
@@ -717,6 +824,37 @@ int wh_w8760_prepare_data(WDT_DEV* pdev, BOARD_INFO* p_out_board_info)
 	p_table_state = wh_w8760_dev_get_parameter_table_state(pdev);
 	if(p_table_state != 1)
 		p_out_board_info->serial_no = 0;
+
+	 if (!wh_w8760_dev_set_n_check_device_mode(pdev, W8760_MODE_COMMAND, 0, 0)) {
+                printf("Set device to command mode fail!\n");
+
+                 return 0;
+         }
+
+        if (wh_w8760_dev_get_section_addr_map(pdev, &p_out_board_info->sec_header.w8760_sec_addr) <= 0)
+                 printf("Can't get section address map!\n");
+
+        if (wh_w8760_dev_get_parameter_chksum_by_sec_header(pdev, p_out_board_info->sec_header.w8760_sec_addr.Parameter, &chksum) > 0)
+                p_out_board_info->sys_param.xmls_id1 = chksum;
+
+	if (wh_w8760_dev_get_context(pdev, &pct_data)) {
+		/* set the default values */
+		p_out_board_info->sys_param.Phy_Frmbuf_W= pct_data.n_cs;
+		p_out_board_info->sys_param.Phy_X0= pct_data.x1;
+		p_out_board_info->sys_param.Phy_X1= pct_data.xn;
+
+		p_out_board_info->sys_param.Phy_Frmbuf_H= pct_data.n_cd;
+		p_out_board_info->sys_param.Phy_Y0= pct_data.y1;
+		p_out_board_info->sys_param.Phy_Y1= pct_data.yn;
+
+
+	}
+
+
+       if (!wh_w8760_dev_set_n_check_device_mode(pdev, W8760_MODE_SENSING, 0, 0))
+               return 0;
+
+
 
 
 	return 1;
