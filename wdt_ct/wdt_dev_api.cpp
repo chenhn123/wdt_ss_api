@@ -712,9 +712,6 @@ int show_info(WDT_DEV *pdev, EXEC_PARAM *pparam)
 		printf("Platform_ID: 0x%x\n", 0x0);
 		printf("XmlId1: %X   XmlId2: %X\n", pinfo->sys_param.xmls_id1, pinfo->sys_param.xmls_id2);
 		printf("Param: phy_x %d, phy_y %d\n", pinfo->sys_param.Phy_Frmbuf_W, pinfo->sys_param.Phy_Frmbuf_H);
-		printf("Tracking_id: ");
-
-
 	} 
 info_exit:	
 	close_device(pdev);
