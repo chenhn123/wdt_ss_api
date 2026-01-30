@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.8] - 2026-01-30
+
+### Changed
+- Update hidraw query method for scenarios with more than 16 hidraw devices
+
+
 ## [1.0.7] - 2026-01-28
 
 ### Changed

@@ -105,23 +105,26 @@ error:
 int  wh_hidraw_scan_device(WDT_DEV* pdev)
 {
 	char deviceFile[PATH_MAX];
-	int count = 0;
 	int handle;
 	struct hidraw_devinfo 	hidraw_info;
 	g_dev_count = 0;
+	DIR *d = opendir("/dev");
+	struct dirent *ent;
+
 
 	memset(g_dev_info, 0, sizeof(WDT_DEVICE_INFO)*MAX_DEV);
 
 	char buf[256] ;
 	memset(buf, 0x0, sizeof(buf));
-
-	while (count < MAX_DEV) {
-		snprintf(deviceFile, PATH_MAX, "/dev/hidraw%d", count);
+	while ((ent = readdir(d)) != NULL)
+	{
+		if (strncmp(ent->d_name, "hidraw", 6) != 0)
+        		continue;
+		snprintf(deviceFile, PATH_MAX, "/dev/%s", ent->d_name);
 
 		wh_printf("device: %s\n", deviceFile);
 		handle = open(deviceFile, O_RDWR|O_NONBLOCK);
 
-		count ++;
 		if (handle < 0) {
 			continue;
 		} else if (get_device_info(handle, &hidraw_info) > 0) {
