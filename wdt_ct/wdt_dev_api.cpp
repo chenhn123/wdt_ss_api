@@ -317,23 +317,47 @@ int init_n_scan_device(WDT_DEV *pdev, EXEC_PARAM *pparam, unsigned int flag)
 	}
 
 	if (!strlen(pparam->dev_path)) {
-		memset(&wdtDevInfo, 0, sizeof(WDT_DEVICE_INFO));	
+		memset(&wdtDevInfo, 0, sizeof(WDT_DEVICE_INFO));
+		if (!(pparam->options & EXEC_EXT_PATH))
+		{
+			/* num of devices */
+			int num = pdev->funcs_device.p_wh_scan_device(pdev);
 		
-		/* num of devices */
-		int num = pdev->funcs_device.p_wh_scan_device(pdev);
-		
-		if (num == 0) {
-			printf("error: device not found \n");
-			return 0;
-		}
-		if (num > 1) {
-			printf("\n");
-                        printf("Multiple devices found.\n");
-                        printf("This tool currently supports only one device.\n");
-                        printf("If you need support for multiple devices, please submit feedback on the GitHub community or email Weida.\n");
-			return 0;
+			if (num == 0) {
+				printf("error: device not found \n");
+				return 0;
+			}
+			if (num > 1) {
+				printf("\n");
+                        	printf("Multiple devices found.\n");
+                        	printf("The device must be opened using the specified path or location (use -l \"path\").\n");
+				return 0;
+			}
 
-		}
+                }
+
+		if (pparam->options & EXEC_EXT_PATH) {
+
+                        strcpy(wdtDevInfo.path, (char *) pparam->dev_path);
+
+                        pdev->funcs_device.p_wh_scan_device(pdev);              // num of devices
+                        if (!pdev->funcs_device.p_wh_get_device(pdev, &wdtDevInfo, 0 | GET_DEVICE_BY_PATH)) {
+                                printf("External path not found: %s\n", wdtDevInfo.path);
+                                return 0;
+                        }
+
+                        printf("Use external path: %s\n", pparam->dev_path);
+                }
+                else {
+                        // just use index 0 to get the device info
+                        if (!pdev->funcs_device.p_wh_get_device(pdev, &wdtDevInfo, 0))
+                                return 0;
+                }
+
+
+
+		
+
 
 		/* just use index 0 to get the device info */
 		if (!pdev->funcs_device.p_wh_get_device(pdev, &wdtDevInfo, 0))
@@ -344,16 +368,17 @@ int init_n_scan_device(WDT_DEV *pdev, EXEC_PARAM *pparam, unsigned int flag)
         	struct dirent *dir;
         	pdev->board_info.i2c_address = DEFAULT_I2C_ADDR;
         	wh_printf("%s\n", pparam->dev_path);
-        	char i2c_sysfs_path[64] = "/sys/bus/i2c/devices";	
-        	strcat(i2c_sysfs_path, strdup(&pparam->dev_path[4]));
+        	char i2c_sysfs_path[64] = "/sys/bus/i2c/devices";
+		snprintf(i2c_sysfs_path, sizeof(i2c_sysfs_path), "/sys/bus/i2c/devices%.40s", &pparam->dev_path[4]);
         	DIR* d = opendir(i2c_sysfs_path);
         	wh_printf("%s\n", i2c_sysfs_path);
 		if (d) {	
 			while ((dir = readdir(d)) != NULL) {
 				if (memcmp(dir->d_name, ACPI_NAME_HID, strlen(ACPI_NAME_HID)) == 0) {
-					char* reg_gen_hid  = strdup(&dir->d_name[4]);
-					wh_printf("current reg_gen_hid:%s\n", reg_gen_hid);
-					pdev->board_info.i2c_address = get_i2c_address_map(reg_gen_hid);
+					if (strlen(dir->d_name) > 4) {
+					       	char *reg_gen_hid = dir->d_name + 4;
+						pdev->board_info.i2c_address = get_i2c_address_map(reg_gen_hid);
+					}
 					wh_printf("i2c_address %x\n", pdev->board_info.i2c_address);
 					break;	
 				}				
@@ -746,6 +771,23 @@ int show_wif_info(WDT_DEV *pdev, EXEC_PARAM *pparam)
 	
 	return 1;
 }
+
+int device_reset(WDT_DEV *pdev, EXEC_PARAM *pparam)
+{
+	if (!pdev)
+		return 0;
+
+
+        if (!init_n_scan_device(pdev, pdev->pparam, 0))
+                return 0;
+
+	pdev->funcs_device_private.p_wh_send_commands(pdev, WH_CMD_RESET, 0);
+	printf("Reset device ... \n");
+
+	wh_sleep(2000);
+	return 1;
+}
+
 
 int find_hid_dev_name(int bus, int vid, int pid, char *device_name)
 {

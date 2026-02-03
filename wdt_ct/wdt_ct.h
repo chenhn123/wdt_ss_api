@@ -23,8 +23,10 @@
 /* define for device control */
 #define		OPTION_UPDATE			0x1
 #define		OPTION_VERIFY			0x2
-#define		OPTION_NO_FORCE			0x4
+#define		OPTION_RESET			0x4
 #define		OPTION_INFO			0x8
+#define         EXEC_EXT_PATH                           0x1000
+#define		GET_DEVICE_BY_PATH			0x100
 
 
 /* define for info from the device */
@@ -35,6 +37,8 @@ int		image_file_burn_data_verify(WDT_DEV *pdev, EXEC_PARAM *pParam);
 int 		show_wif_info(WDT_DEV *pdev, EXEC_PARAM *pparam);
 int		show_info(WDT_DEV *pdev, EXEC_PARAM *pParam);
 int		image_file_check(WDT_DEV *pdev, EXEC_PARAM *pParam);
+int		device_reset(WDT_DEV *pdev, EXEC_PARAM *pParam);
+
 
 void 		wh_printf(const char *fmt, ...);
 void 		wh_sleep(int ms);

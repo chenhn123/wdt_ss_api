@@ -191,10 +191,24 @@ int wh_hidraw_get_device(WDT_DEV* pdev, WDT_DEVICE_INFO *pDevInfo, int flag)
 		index = 0;
 
 		while (index < g_dev_count) {
+			if (option & GET_DEVICE_BY_PATH) { 
+				size_t maxlength = strlen(pDevInfo->path);
+				if (strlen(g_dev_info[index].path)>maxlength)
+					maxlength  = strlen(g_dev_info[index].path);
+
+				if (memcmp(g_dev_info[index].path, pDevInfo->path, maxlength) == 0) {
+					memcpy(pDevInfo, &g_dev_info[index], sizeof(WDT_DEVICE_INFO));
+					g_cur_dev_index = index;
+					return 1;					
+				}
+			}
+
+
 			index ++;
 		}
 	}
 	return 0;
+
 
 }
 

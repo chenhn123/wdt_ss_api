@@ -29,18 +29,19 @@
 #include "wdt_ct.h"
 
 #define		TOOL_TITLE_STR			"wdt_ct_oss"
-#define		TOOL_VERSION_STR		"1.0.8"
+#define		TOOL_VERSION_STR		"1.0.9"
 
-
-#define WDT_UTIL_GETOPTS	"hdv:si:j:"
+#define WDT_UTIL_GETOPTS	"hrvd:si:j:l:"
 
 static struct option long_options[] = {
 	{"help", 0, NULL, 'h'},
-	{"debug",0, NULL, 'd'},		
+	{"debug", 0, NULL, 'd'},
 	{"update", 1, NULL, 'v'},
 	{"info", 0, NULL, 's'},	
 	{"cksum", 0, NULL, 'j'},
-	{"intf", 1, NULL, 'i'},	
+	{"intf", 1, NULL, 'i'},
+        {"reset", 0, NULL, 'r'},
+	{"dev_path", 1, NULL, 'l'},
 	{0, 0, 0, 0},
 };
 
@@ -60,8 +61,9 @@ void print_help(const char *prog_name)
 	printf("  -h, --help      Print this help message\n");
 	printf("  -d, --debug     Enable debug mode\n");
 	printf("  -v, --update    Update firmware with verification\n");
-	printf("  -s, --info      Print device information\n");
+	printf("  -s, --info      Show device information\n");
 	printf("  -j, --verify    Verify device checksum with firmware\n");
+	printf("  -r, --reset     Reset the connected device\n");
 }
 
 void wh_printf(const char *fmt, ...)
@@ -135,6 +137,11 @@ int parse_args(int argc, char* argv[], EXEC_PARAM* pparam)
 			case 'd':
 				g_show_extra_info = 1;
 				break;
+			case 'l': {
+                                strcpy((char *) pparam->dev_path, optarg);
+                                pparam->options |= EXEC_EXT_PATH;
+				break;
+                        }
 			case 'v':
 				pparam->argus |= OPTION_UPDATE;
 				pparam->image_file = optarg;
@@ -148,7 +155,12 @@ int parse_args(int argc, char* argv[], EXEC_PARAM* pparam)
 				break;				
 			case 'i':
 				break;
+			case 'r':
+				pparam->argus |= OPTION_RESET;
+				break;
 			default:
+				//fprintf(stderr, "Unknown option: %c\n", opt);
+				//print_help(argv[0]);
 				break;
 
 		}
@@ -161,9 +173,12 @@ int parse_args(int argc, char* argv[], EXEC_PARAM* pparam)
 			i++;
 		}
 		printf("\n");
-		
 		print_help(argv[0]);
-		return 0;
+	}
+	if (pparam->argus == 0) {
+		printf("No operation specified.\n");
+		print_help(argv[0]);
+		//return 0;
 	}
 
 	return pparam->argus;
@@ -206,7 +221,10 @@ int main(int argc, char * argv[])
 	else if (exec_param.argus & OPTION_INFO)
 		LPFUNC_execution = show_info; 
 	else if (exec_param.argus & OPTION_VERIFY)
-		LPFUNC_execution = image_file_check; 
+		LPFUNC_execution = image_file_check;
+	else if (exec_param.argus & OPTION_RESET)
+		LPFUNC_execution = device_reset;
+
 	
 	if (LPFUNC_execution)
 		ret = LPFUNC_execution(&wdt_dev, &exec_param);
