@@ -276,7 +276,9 @@ int load_lib_func_address(WDT_DEV *pdev, EXEC_PARAM *pparam)
 int load_wif(WDT_DEV *pdev, char *path)
 {
 	if (!pdev || !path)
+	{	
 		return 0;
+	}
 
 	strcpy(pdev->wif_access.wif_path, path);
 

@@ -31,7 +31,7 @@
 #define		TOOL_TITLE_STR			"wdt_ct_oss"
 #define		TOOL_VERSION_STR		"1.0.9"
 
-#define WDT_UTIL_GETOPTS	"hrvd:si:j:l:"
+#define WDT_UTIL_GETOPTS	"hrv:d:si:j:l:"
 
 static struct option long_options[] = {
 	{"help", 0, NULL, 'h'},
