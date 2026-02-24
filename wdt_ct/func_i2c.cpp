@@ -117,8 +117,9 @@ int wh_i2c_scan_adaptor_path(WDT_DEV* pdev, int *adaptor_no)
 					break;	
 				}				
 			}
+
+			closedir(d);
 		}
-		closedir(d);
 	
 		if (found)
 			break;
