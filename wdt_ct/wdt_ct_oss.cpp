@@ -64,6 +64,7 @@ void print_help(const char *prog_name)
 	printf("  -s, --info      Show device information\n");
 	printf("  -j, --verify    Verify device checksum with firmware\n");
 	printf("  -r, --reset     Reset the connected device\n");
+	printf("  -l DEV, --dev_path=DEV\tDesignate a device path(location)\n"
 }
 
 void wh_printf(const char *fmt, ...)
