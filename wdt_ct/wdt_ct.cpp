@@ -413,6 +413,10 @@ int get_boot_mode_internal(unsigned int *mode)
 	memset((void*) &exec_param, 0, sizeof(EXEC_PARAM));
 	exec_param.interface_num = INTERFACE_HIDRAW;
 	exec_param.argus |= OPTION_INFO;
+
+	if (mode == NULL) {
+        	return -1; // handle error safely
+	}
 	*mode = 0;
 
 
@@ -438,9 +442,6 @@ int get_boot_mode_internal(unsigned int *mode)
 	if (LPFUNC_execution)
 		ret = LPFUNC_execution(&wdt_dev, &exec_param);
 	
-	if (mode == NULL) {
-        	return -1; // handle error safely
-	}
 
 	*mode = wdt_dev.board_info.is_ss_boot_mode;
 	

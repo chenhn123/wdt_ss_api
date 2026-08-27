@@ -89,6 +89,11 @@ static __u32 kernel_version = 0;
 static hidraw_device *new_hid_device(void)
 {
 	hidraw_device *dev = calloc(1, sizeof(hidraw_device));
+	if (dev == NULL) {
+		// log/report allocation failure
+		errno = ENOMEM;   // optional, if your API uses errno
+		return NULL;      // or return an error code, depending on function signature
+	}
 	dev->device_handle = -1;
 	dev->blocking = 1;
 	dev->uses_numbered_reports = 0;
