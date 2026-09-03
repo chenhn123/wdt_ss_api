@@ -728,8 +728,12 @@ int show_info(WDT_DEV *pdev, EXEC_PARAM *pparam)
 
 	if (ret) {
 		memset(str, '\0', sizeof(str));
-                memcpy(str, pinfo->dev_info.w8760_feature_devinfo.platform_id, 8);
-                printf("It is %s\n", str);
+		if((pinfo->firmware_id & 0xF0000000) == 0x40000000){
+                	memcpy(str, pinfo->dev_info.w8760_feature_devinfo.platform_id, 8);
+               		printf("It is %s\n", str);
+		}
+
+
 
 		printf("Vendor_ID: 0x%04x\n", pinfo->vid);
 		printf("Product_ID: 0x%04x\n", pinfo->pid);
