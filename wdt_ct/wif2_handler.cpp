@@ -44,8 +44,13 @@ int process_wif2(WIF_FILE2 *pcur_wif)
 
 int free_wif2(WIF_FILE2 *pcur_wif)
 {
+	if (!pcur_wif)
+		return 0;
+
 	if (pcur_wif->pdata) {
 		free(pcur_wif->pdata);
+		pcur_wif->pdata = NULL;
+		pcur_wif->data_len = 0;
 		return 1;
 	}
 
