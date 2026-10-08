@@ -791,7 +791,9 @@ int w8790_dev_flash_write_4k(WDT_DEV* pdev, BYTE* data, UINT32 address, int size
 		for (retry_count = 0; retry_count < RETRY_COUNT; retry_count++) {
 
 			if(retry_count > 0)
-				wh_w8790_dev_send_commands(pdev, WH_CMD_FLASH_ERASE4K, start_addr);
+				retval = wh_w8790_dev_send_commands(pdev, WH_CMD_FLASH_ERASE4K, start_addr);
+			if(!retval)
+				continue;
 
 
 			retval = wh_w8790_dev_write_flash_page(pdev, pdata, start_addr, page_size);
